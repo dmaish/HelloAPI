@@ -66,4 +66,21 @@ def create_app(config_name):
             book_model.book_delete(id)
             return "message: {} deleted successfully".format(id), 200
 
+        @app.route('/api/auth/register/', method=['POST'])
+        def register():
+            return ''
+
+        @app.route('/api/auth/login', methods=['POST'])
+        def login():
+            return ''
+
+        @app.route('/api/users/books/<bookId', methods=['POST'])
+        def borrow_book():
+            return ''
+
+        @app.route('/api/auth/logout/', methods=['POST'])
+        def logout():
+            return ''
+
+
     return app
