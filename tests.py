@@ -12,9 +12,10 @@ class BookListApi(unittest.TestCase):
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.book = {
-            'title': 'The Da Vinci Code',
-            'author': 'Dan Brown',
-            'category': 'Mystery Thriller'
+            "id": 4,
+            "title": "The Da Vinci Code",
+            "author": "Dan Brown",
+            "category": "Mystery Thriller"
         }
 
     def test_new_book_creation(self):
@@ -33,8 +34,8 @@ class BookListApi(unittest.TestCase):
         """Test if book can be retrieved by id"""
         post_res = self.client.post('/api/books/', data=self.book)
         self.assertEqual(post_res.status_code, 201)
-        json_response = json.loads(post_res.data.decode('utf-8').replace("'", "\""))
-        get_res = self.client.get('/api/books/{}'.format(json_response['id']))
+        # json_response = json.loads(post_res.data.decode('utf-8').replace("'", "\""))
+        get_res = self.client.get('/api/books/{}'.format(self.book['id']))
         self.assertEqual(get_res.status_code, 200)
         self.assertIn('The Da Vinci Code', str(get_res.data))
 
@@ -42,9 +43,9 @@ class BookListApi(unittest.TestCase):
         """Test if API can edit an existing book"""
         post_res = self.client.post('/api/books/', data=self.book)
         self.assertEqual(post_res.status_code, 201)
-        put_res = self.clientput('/api/books/1',data={'title': 'inferno'})
+        put_res = self.clientput('/api/books/1', data={'title': 'inferno'})
         self.assertEqual(put_res.status_code, 200)
-        results = self.client.get('/api/books/1')
+        results = self.client.get('/api/books/4')
         self.assertIn('inferno', str(results.data))
 
     def test_book_deletion(self):
