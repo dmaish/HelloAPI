@@ -23,7 +23,7 @@ def create_app(config_name):
         if request.method == 'POST':
 
             json_res = request.get_json(force=True)
-            book = {"title": json_res["title"], "author": json_res["author"],
+            book = {"id": json_res["id"], "title": json_res["title"], "author": json_res["author"],
                     "category": request.json["url"]}
             book_model.book_add(book)
             response = jsonify({"books": BooksModel.all_books})
@@ -38,13 +38,13 @@ def create_app(config_name):
             return response
 
     # getting a specific book using the title as primary key
-    @app.route('/api/books/<string:book_title>', methods=['GET', 'PUT', 'DELETE'])
-    def get_edit_remove_book(book_title):
+    @app.route('/api/books/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+    def get_edit_remove_book(id):
         """Retrieve ,Edit or Remove book using Id"""
 
         # get specific book using title
         if request.method == 'GET':
-            response = jsonify(book_model.book_specific(book_title))
+            response = jsonify(book_model.book_specific(id))
             response.status_code = 200
             return response
 
@@ -52,17 +52,18 @@ def create_app(config_name):
         elif request.method == 'PUT':
             json_res = request.get_json(force=True)
             book_update = {
-            "title": json_res["title"],
-            "author": json_res["author"],
-            "category": json_res["category"],
-            "url": json_res["url"]
+                "id": json_res["id"],
+                "title": json_res["title"],
+                "author": json_res["author"],
+                "category": json_res["category"],
+                "url": json_res["url"]
             }
-            response = jsonify(book_model.book_update(book_title, book_update))
+            response = jsonify(book_model.book_update(id, book_update))
             response.status_code = 200
             return response
 
         elif request.method == 'DELETE':
-            book_model.book_delete(book_title)
-            return "message: {} deleted successfully".format(book_title), 200
+            book_model.book_delete(id)
+            return "message: {} deleted successfully".format(id), 200
 
     return app
