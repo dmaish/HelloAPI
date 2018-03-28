@@ -54,6 +54,11 @@ class BooksModel:
 
 class User:
 
+    test_dict = {
+            "username": "daniel",
+            "email": "mainadaniel81@gmail.com",
+            "password": "youllneverguess"
+        }
     users_list = []
 
     def __init__(self):

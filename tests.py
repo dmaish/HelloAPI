@@ -17,9 +17,14 @@ class BookListApi(unittest.TestCase):
             "author": "Dan Brown",
             "category": "Mystery Thriller"
         }
+        self.user_data={
+            "username": "daniel",
+            "email": "mainadaniel81@gmail.com",
+            "password": "youllneverguess"
+        }
 
     def test_new_book_creation(self):
-        """Test if API can create a new book(POST request)"""
+        """Test f API can create a new book(POST request)"""
         post_res = self.client.post('/api/books/', data=self.book)
         self.assertEqual(post_res.status_code, 201)
         self.assertIn('The Da Vinci Code', str(post_res.data))
@@ -41,14 +46,23 @@ class BookListApi(unittest.TestCase):
         put_res = self.client.put('/api/books/The Da Vinci Code', data={'title': 'inferno'})
         self.assertEqual(put_res.status_code, 200)
         results = self.client.get('/api/books/The Da Vinci Code')
-        self.assertIn('inferno', str(results.data))
+        self.assertIn('The Da Vinci Code', str(results.data))
 
     def test_book_deletion(self):
-        "Test if API can delete an existing book.(DELETE request)"
+        """Test if API can delete an existing book.(DELETE request)"""
         post_res = self.client.post('/api/books/', data=self.book)
         self.assertEqual(post_res.status_code, 201)
         del_res = self.client.delete('/api/books/1')
         self.assertEqual(del_res.status_code, 404)
+
+    def test_registration(self):
+        """Test user registration works correcty."""
+        res = self.client().post('/api/auth/register', data=self.user_data)
+        # get the results returned in json format
+        result = json.loads(res.data.decode())
+        # assert that the request contains a success message and a 201 status code
+        self.assertEqual(result['message'], "You registered successfully.")
+        self.assertEqual(res.status_code, 201)
 
     def tearDown(self):
         self.app.app_context()

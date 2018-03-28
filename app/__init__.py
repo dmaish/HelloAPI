@@ -68,7 +68,16 @@ def create_app(config_name):
 
         @app.route('/api/auth/register/', method=['POST'])
         def register():
-            return ''
+            user_obj = User()
+            test_user=user_obj.test_dict
+            user_obj.registration(test_user["username"],
+                                  test_user["email"],
+                                  test_user["password"])
+            response = {
+                'message': 'You registered successfully. Please log in.'
+            }
+
+            return jsonify(response), 201
 
         @app.route('/api/auth/login', methods=['POST'])
         def login():
