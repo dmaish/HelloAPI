@@ -79,17 +79,4 @@ def create_app(config_name):
 
             return jsonify(response), 201
 
-        @app.route('/api/auth/login', methods=['POST'])
-        def login():
-            return ''
-
-        @app.route('/api/users/books/<bookId', methods=['POST'])
-        def borrow_book():
-            return ''
-
-        @app.route('/api/auth/logout/', methods=['POST'])
-        def logout():
-            return ''
-
-
     return app
