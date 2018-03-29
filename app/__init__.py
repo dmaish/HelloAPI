@@ -64,7 +64,7 @@ def create_app(config_name):
 
         elif request.method == 'DELETE':
             book_model.book_delete(id)
-            return "message: {} deleted successfully".format(id), 200
+            return "message: {} deleted successfully".format(id), 404
 
         @app.route('/api/auth/register/', method=['POST'])
         def register():

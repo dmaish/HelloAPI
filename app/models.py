@@ -5,9 +5,7 @@ import jwt
 
 class BooksModel:
 
-    all_books = [{"id": 1, "title": "The Da Vinci Code", "author": "Dan Brown", "category": "Mystery", "url": "https..."},
-             {"id": 2, "title": "Almost Heaven", "author": "Judith McNaught", "category": "Romance", "url": "https..."},
-             {"id": 3, "title": "The Juror", "author": "John Grisham", "category": "Drama", "url": "https..."}]
+    all_books = []
 
     def __init__(self):
         pass
@@ -53,13 +51,45 @@ class BooksModel:
 
 
 class User:
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email
+        self.password = generate_password_hash(password)
+        user_borrowed = []
+        user_returned = []
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    users_list = []
     test_dict = {
             "username": "daniel",
             "email": "mainadaniel81@gmail.com",
             "password": "youllneverguess"
         }
-    users_list = []
 
     def __init__(self):
         """initilizes the admin user"""
