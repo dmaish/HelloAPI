@@ -1,6 +1,10 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import abort
+from flask import abort, current_app
+import datetime
 import jwt
+
+all_users = []  # list containing all users in the library
+borrowed_books = [] # list containing id of books borrowed and username who borrowed
 
 
 class BooksModel:
@@ -42,7 +46,7 @@ class BooksModel:
         """method deletes specific book according to book id"""
         old_book = None
         for each_book in self.all_books:
-            if each_book["title"] == id:
+            if each_book["id"] == id:
                 old_book = each_book
         # finding the index of the book with matching title
         for i, j in enumerate(self.all_books):
@@ -51,92 +55,51 @@ class BooksModel:
 
 
 class User:
+    """This class defines the users model"""
     def __init__(self, username, email, password):
         self.username = username
         self.email = email
+        self.password = password
+        self.is_admin = False
+        self.books_borrowed = []
+        self.books_returned = []
+
+    def password_set(self, password):
         self.password = generate_password_hash(password)
-        user_borrowed = []
-        user_returned = []
 
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
 
+    def save_user(self):
+        all_users.append(self)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    users_list = []
-    test_dict = {
-            "username": "daniel",
-            "email": "mainadaniel81@gmail.com",
-            "password": "youllneverguess"
-        }
-
-    def __init__(self):
-        """initilizes the admin user"""
-        admin = {"username": "admin",
-                 "email": "admin.gmail.com",
-                 "password": generate_password_hash("bluestrokes")}
-
-        self.users_list.append(admin)
-
-    # before the user is registered they're checked if they exist already using email
-    def registration(self, username, email, password):
-        if self.check_user_exists(email):
-            abort()
-        else:
-            new_user = {"username": username,
-                        "email": email,
-                        "password": self.salt_password(password)
+    def generate_token(self, email):
+        """ generates the access token """
+        try:
+            # setting up a payload with an expiration time
+            payload = {
+                "exp": datetime.utcnow() + datetime.timedelta(minutes = 5),
+                "iat": datetime.utcnow(),
+                "sub": email
             }
-            self.users_list.append(new_user)
+            # encode the string token using the payload
+            jwt_string = jwt.encode(payload,
+                                    current_app.config.get("SECRET_KEY"),
+                                    algorithm='HS256')
+            return jwt_string
+        except Exception as e:
+            # return an error in string format if an exception occurs
+            return str(e)
 
-    @staticmethod
-    def salt_password(password):
-        """set password to a hashed password"""
-        return generate_password_hash(password)
-
-    # check if user exists using email
-    def check_user_exists(self,email):
-        for users in self.users_list:
-            if email == users["email"]:
-                return True
-            else:
-                return False
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def decode_token(token):
+        """decodes the token from the authorization header"""
+        try:
+            payload = jwt.decode(token, current_app.config.get("SECRET_KEY"))
+            return  payload["sub"]
+        except jwt.ExpiredSignatureError:
+            # if token is expired, return an error
+            return "Expired token. Please login again"
+        except jwt.InvalidTokenError:
+            # if token is invalid, return an error
+            return "Invalid token.Register if not register or try loging in "
 

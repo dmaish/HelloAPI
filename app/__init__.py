@@ -14,7 +14,7 @@ def create_app(config_name):
 
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
-    # app.config.from_pyfile('config.py')
+    app.config.from_pyfile('config.py')
     # importation of models should be here wen it comes to database
 
     @app.route('/api/books/', methods=['GET', 'POST'])
@@ -61,22 +61,11 @@ def create_app(config_name):
             response = jsonify(book_model.book_update(id, book_update))
             response.status_code = 200
             return response
-
         elif request.method == 'DELETE':
             book_model.book_delete(id)
             return "message: {} deleted successfully".format(id), 404
 
-        @app.route('/api/auth/register/', method=['POST'])
-        def register():
-            user_obj = User()
-            test_user=user_obj.test_dict
-            user_obj.registration(test_user["username"],
-                                  test_user["email"],
-                                  test_user["password"])
-            response = {
-                'message': 'You registered successfully. Please log in.'
-            }
 
-            return jsonify(response), 201
+
 
     return app
