@@ -66,8 +66,8 @@ def create_app(config_name):
             return "message: {} deleted successfully".format(id), 404
 
     # importing the authentication blueprint and register it on the app
-    from .auth import auth_blueprint
-    app.register_blueprint(auth_blueprint)
+    from .auth import auth
+    app.register_blueprint(auth)
 
 
     return app

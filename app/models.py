@@ -4,7 +4,7 @@ import datetime
 import jwt
 
 all_users = []  # list containing all users in the library
-borrowed_books = [] # list containing id of books borrowed and username who borrowed
+borrowed_books = []  # list containing id of books borrowed and username who borrowed
 
 
 class BooksModel:
@@ -56,13 +56,11 @@ class BooksModel:
 
 class User:
     """This class defines the users model"""
-    def __init__(self, username, email, password):
-        self.username = username
-        self.email = email
-        self.password = password
+    def __init__(self):
+        self.username = None
+        self.email = None
+        self.password = None
         self.is_admin = False
-        self.books_borrowed = []
-        self.books_returned = []
 
     def password_set(self, password):
         self.password = generate_password_hash(password)
@@ -72,6 +70,12 @@ class User:
 
     def save_user(self):
         all_users.append(self)
+
+    @staticmethod
+    def get_by_email(email):
+        for user in all_users:
+            if user.email == email:
+                return user
 
     def generate_token(self, email):
         """ generates the access token """

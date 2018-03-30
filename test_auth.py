@@ -18,11 +18,11 @@ class Authenticate(unittest.TestCase):
 
     def test_registration(self):
         """Testing if user can register"""
-        response = self.client().post("/api/auth/register", data=self.test_user)
+        response = self.client.post("/api/auth/register", data=self.test_user)
         # getting the results returned in json format
         result = json.loads(response.data.decode())
         # assert that the request contains a success message and a 201 status code
-        self.assertEqual(result["massage"], "You registered successfully")
+        self.assertEqual(result["message"], "You registered successfully")
         self.assertEqual(response.status_code, 201)
 
     def test_already_registered_user(self):
@@ -30,10 +30,16 @@ class Authenticate(unittest.TestCase):
         response = self.client.post("/api/auth/register", data=self.test_user)
         self.assertEqual(response.status_code, 201)
         second_response = self.client.post("/api/auth/register", data=self.test_user)
+        self.assertEqual(second_response.status_code, 202)
         result = json.loads(second_response.data.decode())
-        self.assertEqual(result["message"], "User already exist.Please login")
+        self.assertEqual(result["message"], "User already exists.Please login")
 
     def tearDown(self):
         self.app_context
+
+
+if __name__ == '__main__':
+    unittest.main()
+
 
 
