@@ -65,7 +65,9 @@ def create_app(config_name):
             book_model.book_delete(id)
             return "message: {} deleted successfully".format(id), 404
 
-
+    # importing the authentication blueprint and register it on the app
+    from .auth import auth_blueprint
+    app.register_blueprint(auth_blueprint)
 
 
     return app

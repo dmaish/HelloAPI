@@ -95,10 +95,12 @@ class User:
         """decodes the token from the authorization header"""
         try:
             payload = jwt.decode(token, current_app.config.get("SECRET_KEY"))
-            return  payload["sub"]
+            return payload["sub"]
+
         except jwt.ExpiredSignatureError:
             # if token is expired, return an error
             return "Expired token. Please login again"
+
         except jwt.InvalidTokenError:
             # if token is invalid, return an error
             return "Invalid token.Register if not register or try loging in "
