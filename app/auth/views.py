@@ -71,6 +71,22 @@ def user_login():
         return jsonify(response), 401
 
 
+@auth.route("/api/auth/reset-password", methods=["POST"])
+@jwt_required
+def password_reset():
+    email = get_jwt_identity()
+    user = User.get_by_email(email)
+    new_password = request.data["password"]
+    user.password_set(new_password)
+
+    response = jsonify({"message": "password reset successful"})
+    response.status_code = 200
+    return response
+
+
+
+
+
 
 
 

@@ -59,6 +59,12 @@ class Authenticate(unittest.TestCase):
         self.assertEqual(response_login.status_code, 401)
         self.assertEqual(result["message"], "Invalid email or password, Please try again")
 
+    def test_password_reset(self):
+        """Test reset of user password"""
+        register_response = self.client.post("/api/auth/register", data=self.test_user)
+        self.assertEqual(register_response.status_code, 201)
+        # Todo make sure to complete the password reset test
+
     def tearDown(self):
         self.app_context
 

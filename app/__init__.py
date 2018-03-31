@@ -27,7 +27,7 @@ def create_app(config_name):
 
             json_res = request.get_json(force=True)
             book = {"id": json_res["id"], "title": json_res["title"], "author": json_res["author"],
-                    "category": request.json["url"]}
+                    "category": request.json["category"], "url": request.json["url"]}
             book_model.book_add(book)
             response = jsonify({"books": BooksModel.all_books})
             response.status_code = 201
@@ -72,6 +72,5 @@ def create_app(config_name):
     # importing the authentication blueprint and register it on the app
     from .auth import auth
     app.register_blueprint(auth)
-
 
     return app
