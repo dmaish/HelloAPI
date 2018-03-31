@@ -1,7 +1,7 @@
+import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import abort, current_app
 import datetime
-import jwt
 
 all_users = []  # list containing all users in the library
 borrowed_books = []  # list containing id of books borrowed and username who borrowed
@@ -19,7 +19,7 @@ class BooksModel:
         self.all_books.append(book)
 
     def book_all(self):
-        "method returns all books"
+        """method returns all books"""
         return self.all_books
 
     def book_specific(self, id):
@@ -76,36 +76,3 @@ class User:
         for user in all_users:
             if user.email == email:
                 return user
-
-    def generate_token(self, email):
-        """ generates the access token """
-        try:
-            # setting up a payload with an expiration time
-            payload = {
-                "exp": datetime.utcnow() + datetime.timedelta(minutes = 5),
-                "iat": datetime.utcnow(),
-                "sub": email
-            }
-            # encode the string token using the payload
-            jwt_string = jwt.encode(payload,
-                                    current_app.config.get("SECRET_KEY"),
-                                    algorithm='HS256')
-            return jwt_string
-        except Exception as e:
-            # return an error in string format if an exception occurs
-            return str(e)
-
-    def decode_token(token):
-        """decodes the token from the authorization header"""
-        try:
-            payload = jwt.decode(token, current_app.config.get("SECRET_KEY"))
-            return payload["sub"]
-
-        except jwt.ExpiredSignatureError:
-            # if token is expired, return an error
-            return "Expired token. Please login again"
-
-        except jwt.InvalidTokenError:
-            # if token is invalid, return an error
-            return "Invalid token.Register if not register or try loging in "
-

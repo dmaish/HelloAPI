@@ -5,6 +5,7 @@ from flask import request, jsonify, abort
 # local imports
 from config import app_config
 from models import *
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 
 
 # the following method accepts environment variable as its variable
@@ -15,9 +16,11 @@ def create_app(config_name):
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
+    jwt = JWTManager(app)
     # importation of models should be here wen it comes to database
 
     @app.route('/api/books/', methods=['GET', 'POST'])
+    @jwt_required
     def list_books_new_book():
 
         if request.method == 'POST':
@@ -39,6 +42,7 @@ def create_app(config_name):
 
     # getting a specific book using the title as primary key
     @app.route('/api/books/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+    @jwt_required
     def get_edit_remove_book(id):
         """Retrieve ,Edit or Remove book using Id"""
 

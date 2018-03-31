@@ -37,13 +37,15 @@ class Authenticate(unittest.TestCase):
     def test_user_login(self):
         """Test if registered user can be logged in """
         register_response = self.client.post("/api/auth/register", data=self.test_user)
-        self.assertEqual(register_response.status_code, 201)
+        self.assertEqual(register_response.status_code, 202)
         login_response = self.client.post("/api/auth/login", data=self.test_user)
 
         # get results after login attempt in json format
         result = json.loads(login_response.data.decode())
         # test the login response contains a success message
         self.assertEqual(result["message"], "You logged in successfully")
+        self.assertEqual(login_response.status_code, 200)
+        self.assertTrue(result["access_token"])
 
     def test_non_registered_user_login(self):
         """Test non registered users cannot login."""
@@ -54,7 +56,7 @@ class Authenticate(unittest.TestCase):
         }
         response_login = self.client.post("/api/auth/login", data = not_a_user)
         result = json.loads(response_login.data.decode())
-        self.assertEqual(response_login.status_code, 404)
+        self.assertEqual(response_login.status_code, 401)
         self.assertEqual(result["message"], "Invalid email or password, Please try again")
 
     def tearDown(self):
