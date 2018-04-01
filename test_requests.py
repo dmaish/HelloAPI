@@ -3,7 +3,7 @@ import json
 from app import create_app
 
 
-class BookListApi(unittest.TestCase):
+class BookListApiTestcase(unittest.TestCase):
     """class representing the test case"""
 
     def setUp(self):
