@@ -62,7 +62,7 @@ class AuthenticateTestcase(unittest.TestCase):
         """Test reset of user password"""
         # register a test user then log the
         register_response = self.client.post("/api/auth/register", data=self.test_user)
-        self.assertEqual(register_response.status_code, 201)
+        self.assertEqual(register_response.status_code, 202)
         # Todo make sure to complete the password reset test
 
     def tearDown(self):
