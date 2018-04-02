@@ -1,6 +1,12 @@
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask import abort
+from time import strftime, gmtime
+
 import jwt
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask import abort, current_app
+from datetime import datetime
+
+all_users = []  # list containing all users in the library
+borrowed_books = []  # list containing id of books borrowed and username who borrowed
 
 
 class BooksModel:
@@ -15,7 +21,7 @@ class BooksModel:
         self.all_books.append(book)
 
     def book_all(self):
-        "method returns all books"
+        """method returns all books"""
         return self.all_books
 
     def book_specific(self, id):
@@ -42,7 +48,7 @@ class BooksModel:
         """method deletes specific book according to book id"""
         old_book = None
         for each_book in self.all_books:
-            if each_book["title"] == id:
+            if each_book["id"] == id:
                 old_book = each_book
         # finding the index of the book with matching title
         for i, j in enumerate(self.all_books):
@@ -51,77 +57,54 @@ class BooksModel:
 
 
 class User:
-    def __init__(self, username, email, password):
-        self.username = username
-        self.email = email
-        self.password = generate_password_hash(password)
-        user_borrowed = []
-        user_returned = []
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    users_list = []
-    test_dict = {
-            "username": "daniel",
-            "email": "mainadaniel81@gmail.com",
-            "password": "youllneverguess"
-        }
-
+    """This class defines the users model"""
     def __init__(self):
-        """initilizes the admin user"""
-        admin = {"username": "admin",
-                 "email": "admin.gmail.com",
-                 "password": generate_password_hash("bluestrokes")}
+        self.username = None
+        self.email = None
+        self.password = None
+        self.is_admin = False
+        self.books_by_particular_user = []
 
-        self.users_list.append(admin)
+    def password_set(self, password):
+        self.password = generate_password_hash(password)
 
-    # before the user is registered they're checked if they exist already using email
-    def registration(self, username, email, password):
-        if self.check_user_exists(email):
-            abort()
-        else:
-            new_user = {"username": username,
-                        "email": email,
-                        "password": self.salt_password(password)
-            }
-            self.users_list.append(new_user)
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
+    def save_user(self):
+        all_users.append(self)
+
+    def user_book_borrow(self, id):
+        book = BooksModel.book_specific(id)
+        self.books_by_particular_user.append(book)
+        # appending to the borrowed books record
+        borrow_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        borrowing_record = BorrowingRecord(book, book["title"],
+                                           borrow_time, self)
 
     @staticmethod
-    def salt_password(password):
-        """set password to a hashed password"""
-        return generate_password_hash(password)
+    def get_by_email(email):
+        for user in all_users:
+            if user.email == email:
+                return user
 
-    # check if user exists using email
-    def check_user_exists(self,email):
-        for users in self.users_list:
-            if email == users["email"]:
-                return True
-            else:
-                return False
+
+class BorrowingRecord:
+    def __init__(self, title, borrow_time, user):
+        self.title = title
+        self.borrow_time =borrow_time,
+        self.user = user
+
+    def save_record(self):
+        self.save_record(self)
+
+
+class Blacklist:
+    """this class stores revoked json web tokens"""
+    def __init__(self):
+        self.blacklist = []
+
+
 
 
 

@@ -3,7 +3,7 @@ import json
 from app import create_app
 
 
-class BookListApi(unittest.TestCase):
+class BookListApiTestcase(unittest.TestCase):
     """class representing the test case"""
 
     def setUp(self):
@@ -61,7 +61,7 @@ class BookListApi(unittest.TestCase):
         self.assertEqual(del_res.status_code, 404)
 
     def tearDown(self):
-        self.app.app_context()
+        self.app_context()
 
 
 if __name__ == '__main__':
