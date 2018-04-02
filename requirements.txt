@@ -4,11 +4,9 @@ enum34==1.1.6
 Flask==0.12.2
 Flask-API==1.0
 Flask-JWT==0.3.2
-<<<<<<< HEAD
 Flask-JWT-Extended==3.7.2
 Flask-Testing==0.7.1
 =======
-idna==2.6
 ipaddress==1.0.19
 itsdangerous==0.24
 Jinja2==2.10
@@ -27,12 +25,4 @@ Flask-JWT==0.3.2
 Flask-JWT-Extended==3.7.2
 >>>>>>> 7c5a8f839c1e0241cde3d87f92ee0d3b58a7c4e5
 idna==2.6
-ipaddress==1.0.19
-itsdangerous==0.24
-Jinja2==2.10
-MarkupSafe==1.0
-pyasn1==0.4.2
-pycparser==2.18
-PyJWT==1.4.2
-six==1.11.0
-Werkzeug==0.14.1
+
