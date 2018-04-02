@@ -1,10 +1,10 @@
 import unittest
 import json
 from app import create_app
-from app import models
+import app.models
 
 
-class Authenticate(unittest.TestCase):
+class AuthenticateTestcase(unittest.TestCase):
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
@@ -54,13 +54,14 @@ class Authenticate(unittest.TestCase):
             "email": "not_a_user@example.com",
             "password": "nope"
         }
-        response_login = self.client.post("/api/auth/login", data = not_a_user)
+        response_login = self.client.post("/api/auth/login", data=not_a_user)
         result = json.loads(response_login.data.decode())
         self.assertEqual(response_login.status_code, 401)
         self.assertEqual(result["message"], "Invalid email or password, Please try again")
 
     def test_password_reset(self):
         """Test reset of user password"""
+        # register a test user then log the
         register_response = self.client.post("/api/auth/register", data=self.test_user)
         self.assertEqual(register_response.status_code, 201)
         # Todo make sure to complete the password reset test

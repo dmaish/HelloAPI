@@ -1,6 +1,6 @@
 from . import auth
 from flask import request, jsonify
-from app.models import User
+from app.models import User, Blacklist
 from flask_jwt_extended import (create_access_token,
                                 get_jwt_identity,
                                 jwt_required,
@@ -82,6 +82,17 @@ def password_reset():
     response = jsonify({"message": "password reset successful"})
     response.status_code = 200
     return response
+
+
+@auth.route("/api/auth/logout", methods=["DELETE"])
+@jwt_required
+def logout():
+    """endpoint for revoking the current users json web token"""
+    jti = get_raw_jwt()['jti']
+    Blacklist().blacklist.append(jti)
+    return jsonify({"msg": "Successfully logged out"})
+
+
 
 
 

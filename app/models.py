@@ -1,7 +1,9 @@
+from time import strftime, gmtime
+
 import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import abort, current_app
-import datetime
+from datetime import datetime
 
 all_users = []  # list containing all users in the library
 borrowed_books = []  # list containing id of books borrowed and username who borrowed
@@ -61,6 +63,7 @@ class User:
         self.email = None
         self.password = None
         self.is_admin = False
+        self.books_by_particular_user = []
 
     def password_set(self, password):
         self.password = generate_password_hash(password)
@@ -71,8 +74,52 @@ class User:
     def save_user(self):
         all_users.append(self)
 
+    def user_book_borrow(self, id):
+        book = BooksModel.book_specific(id)
+        self.books_by_particular_user.append(book)
+        # appending to the borrowed books record
+        borrow_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        borrowing_record = BorrowingRecord(book, book["title"],
+                                           borrow_time, self)
+
     @staticmethod
     def get_by_email(email):
         for user in all_users:
             if user.email == email:
                 return user
+
+
+class BorrowingRecord:
+    def __init__(self, title, borrow_time, user):
+        self.title = title
+        self.borrow_time =borrow_time,
+        self.user = user
+
+    def save_record(self):
+        self.save_record(self)
+
+
+class Blacklist:
+    """this class stores revoked json web tokens"""
+    def __init__(self):
+        self.blacklist = []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
