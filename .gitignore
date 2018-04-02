@@ -3,3 +3,4 @@
 venv_hello/
 .idea/
 app/__init__.pycc
+hello_venv/
