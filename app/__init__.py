@@ -5,6 +5,7 @@ from flask import request, jsonify, abort
 # local imports
 from config import app_config
 from models import *
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 
 
 # the following method accepts environment variable as its variable
@@ -14,17 +15,19 @@ def create_app(config_name):
 
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
-    # app.config.from_pyfile('config.py')
+    app.config.from_pyfile('config.py')
+    jwt = JWTManager(app)
     # importation of models should be here wen it comes to database
 
     @app.route('/api/books/', methods=['GET', 'POST'])
+    @jwt_required
     def list_books_new_book():
 
         if request.method == 'POST':
 
             json_res = request.get_json(force=True)
             book = {"id": json_res["id"], "title": json_res["title"], "author": json_res["author"],
-                    "category": request.json["url"]}
+                    "category": request.json["category"], "url": request.json["url"]}
             book_model.book_add(book)
             response = jsonify({"books": BooksModel.all_books})
             response.status_code = 201
@@ -39,6 +42,7 @@ def create_app(config_name):
 
     # getting a specific book using the title as primary key
     @app.route('/api/books/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+    @jwt_required
     def get_edit_remove_book(id):
         """Retrieve ,Edit or Remove book using Id"""
 
@@ -61,35 +65,30 @@ def create_app(config_name):
             response = jsonify(book_model.book_update(id, book_update))
             response.status_code = 200
             return response
-
         elif request.method == 'DELETE':
             book_model.book_delete(id)
             return "message: {} deleted successfully".format(id), 404
 
-        @app.route('/api/auth/register/', method=['POST'])
-        def register():
-            user_obj = User()
-            test_user=user_obj.test_dict
-            user_obj.registration(test_user["username"],
-                                  test_user["email"],
-                                  test_user["password"])
-            response = {
-                'message': 'You registered successfully. Please log in.'
-            }
+    @app.route("/api/users/books/<int:id>", methods=["POST"])
+    @jwt_required
+    def borrow_book(id):
+        """Retrieve a specific book and allow user to borrow"""
+        # get details of book being borrowed
+        book = BooksModel().book_specific(id)
 
-            return jsonify(response), 201
+        # get user borrowing book
+        user_email = get_jwt_identity()
+        user = User().get_by_email(user_email)
 
-        @app.route('/api/auth/login', methods=['POST'])
-        def login():
-            return ''
+        response = {
+            "user": user.username,
+            "book_borrowed": book["title"]
+        }
+        # response.status_code = 200
+        return jsonify(response), 200
 
-        @app.route('/api/users/books/<bookId', methods=['POST'])
-        def borrow_book():
-            return ''
-
-        @app.route('/api/auth/logout/', methods=['POST'])
-        def logout():
-            return ''
-
+    # importing the authentication blueprint and register it on the app
+    from .auth import auth
+    app.register_blueprint(auth)
 
     return app
