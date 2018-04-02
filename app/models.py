@@ -99,6 +99,13 @@ class BorrowingRecord:
         self.save_record(self)
 
 
+class Blacklist:
+    """this class stores revoked json web tokens"""
+    def __init__(self):
+        self.blacklist = []
+
+
+
 
 
 
