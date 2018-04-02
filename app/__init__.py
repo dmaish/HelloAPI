@@ -69,6 +69,24 @@ def create_app(config_name):
             book_model.book_delete(id)
             return "message: {} deleted successfully".format(id), 404
 
+    @app.route("/api/users/books/<int:id>", methods=["POST"])
+    @jwt_required
+    def borrow_book(id):
+        """Retrieve a specific book and allow user to borrow"""
+        # get details of book being borrowed
+        book = BooksModel().book_specific(id)
+
+        # get user borrowing book
+        user_email = get_jwt_identity()
+        user = User().get_by_email(user_email)
+
+        response = {
+            "user": user.username,
+            "book_borrowed": book["title"]
+        }
+        # response.status_code = 200
+        return jsonify(response), 200
+
     # importing the authentication blueprint and register it on the app
     from .auth import auth
     app.register_blueprint(auth)

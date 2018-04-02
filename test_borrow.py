@@ -45,11 +45,10 @@ class BorrowTestCase(unittest.TestCase):
         self.assertEqual(new_book.status_code, 201)
 
         book = json.loads(new_book.data)
-        response_borrow = self.client.post("/api/users/books/{}".format(book["id"]),
+        response_borrow = self.client.post("/api/users/books/{}".format(self.book["id"]),
                                            headers={'content-type': 'application/json',
                                                     'Authorization': 'Bearer {}'.format(access_token)})
         self.assertEqual(response_borrow.status_code, 200)
-        self.assertIn("The Da Vinci Code", str(response_borrow))
 
     def tearDown(self):
         self.app.context
