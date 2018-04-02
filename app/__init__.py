@@ -52,7 +52,7 @@ def create_app(config_name):
         elif request.method == 'PUT':
             json_res = request.get_json(force=True)
             book_update = {
-                "id": json_res["id"]git ,
+                "id": json_res["id"],
                 "title": json_res["title"],
                 "author": json_res["author"],
                 "category": json_res["category"],
