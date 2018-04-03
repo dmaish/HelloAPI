@@ -114,7 +114,5 @@ class BookListApiTestcase(unittest.TestCase):
         self.assertEqual(del_res.status_code, 404)
 
 
-
-
 if __name__ == '__main__':
     unittest.main()
