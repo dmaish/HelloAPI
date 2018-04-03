@@ -4,7 +4,7 @@ from flask_api import FlaskAPI
 from flask import request, jsonify, abort
 # local imports
 from config import app_config
-from models import *
+from app.models import *
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 
 
