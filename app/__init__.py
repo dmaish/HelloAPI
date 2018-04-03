@@ -1,4 +1,4 @@
-# third parth imports
+# third party imports
 from flask import Flask, jsonify
 from flask_api import FlaskAPI
 from flask import request, jsonify, abort
