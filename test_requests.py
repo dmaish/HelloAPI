@@ -1,6 +1,6 @@
 import unittest
 import json
-from app import create_app, BooksModel
+from app import create_app, models
 
 
 class BookListApiTestcase(unittest.TestCase):
@@ -36,7 +36,7 @@ class BookListApiTestcase(unittest.TestCase):
         }
 
     def tearDown(self):
-        BooksModel.all_books
+        models.all_books
 
     def get_access_token(self, user):
         """registers and generates an access token for the user"""
@@ -99,7 +99,6 @@ class BookListApiTestcase(unittest.TestCase):
     #                                     'Authorization': 'Bearer {}'.format(access_token)
     #                                 })
     #     self.assertIn('Inferno', str(results.data))
-
 
     def test_book_deletion(self):
         """Test if API can delete an existing book.(DELETE request)"""

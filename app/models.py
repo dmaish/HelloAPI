@@ -5,40 +5,54 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import abort, current_app
 from datetime import datetime
 
-all_users = []  # list containing all users in the library
-borrowed_books = []  # list containing id of books borrowed and username who borrowed
+all_users = []           # list containing all users in the library
+borrowed_books = []      # list containing id of books borrowed and username who borrowed
+all_books = []           # all books in the library
 
 
 class BooksModel:
-
-    all_books = []
-
     def __init__(self):
-        pass
+        self.id = None
+        self.title = None
+        self.author = None
+        self.category = None
+        self.url = None
 
-    def book_add(self, book):
+    def book_add(self):
         """ method to add book dictionaries to the books list"""
-        self.all_books.append(book)
+        all_books.append(self)
 
-    def book_all(self):
-        """method returns all books"""
-        return self.all_books
+    @staticmethod
+    def book_all():
+        """method returns all books in json form"""
+        books = []
+        for each_book in all_books:
+            book = {
+                "id": each_book.id,
+                "title": each_book.title,
+                "author": each_book.author,
+                "category": each_book.category,
+                "url": each_book.url
+            }
+            books.append(book)
+        return books
 
-    def book_specific(self, id):
+    @staticmethod
+    def book_specific(id):
         """method returns specific book according to book id"""
-        for each_book in self.all_books:
-            if each_book["id"] == id:
-                return each_book
+        for book in all_books:
+            if book.id == id:
+                return book
 
     # FINISH UP THIS CODE THAT REPLACES THE UPDATED BOOK WITH THE OLD BOOK IN THE all_books LIST
     def book_update(self, id, book_update):
         """method returns specific book according to book id"""
         old_book = None
-        for each_book in self.all_books:
+        for each_book in all_books:
             if each_book["id"] == id:
                 old_book = each_book
         # finding the index of the book with matching title
-        for i, j in enumerate(self.all_books):
+        for i, j in enumerate(all_books):
             if j == old_book:
                 # editing the books list
                 self.all_books[i] = book_update
@@ -46,16 +60,12 @@ class BooksModel:
 
                 return edited_book
 
-    def book_delete(self, id):
+    @staticmethod
+    def book_delete(id):
         """method deletes specific book according to book id"""
-        old_book = None
-        for each_book in self.all_books:
-            if each_book["id"] == id:
-                old_book = each_book
-        # finding the index of the book with matching title
-        for i, j in enumerate(self.all_books):
-            if j == old_book:
-                del self.all_books[i]
+        for i, book in enumerate(all_books):
+            if book.id == id:
+                del all_books[i]
 
 
 class User:
@@ -77,7 +87,7 @@ class User:
         all_users.append(self)
 
     def user_book_borrow(self, id):
-        book = BooksModel.book_specific(id)
+        book = BooksModel.book_specific()
         self.books_by_particular_user.append(book)
         # appending to the borrowed books record
         borrow_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
@@ -94,7 +104,7 @@ class User:
 class BorrowingRecord:
     def __init__(self, title, borrow_time, user):
         self.title = title
-        self.borrow_time =borrow_time,
+        self.borrow_time = borrow_time,
         self.user = user
 
     def save_record(self):

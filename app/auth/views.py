@@ -16,11 +16,11 @@ def user_register():
     # checking if user already exists
     user = User.get_by_email(email)
     if not user:
-            create_user = User()
-            create_user.username = username
-            create_user.email = email
-            create_user.password_set(password)
-            create_user.save_user()
+            new_user = User()
+            new_user.username = username
+            new_user.email = email
+            new_user.password_set(password)
+            new_user.save_user()
 
             response = {
                 "message": "You registered successfully"

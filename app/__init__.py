@@ -20,16 +20,23 @@ def create_app(config_name):
     # importation of models should be here wen it comes to database
 
     @app.route('/api/books/', methods=['GET', 'POST'])
-    # @jwt_required
+    @jwt_required
     def list_books_new_book():
 
         if request.method == 'POST':
 
             json_res = request.get_json(force=True)
-            book = {"id": json_res["id"], "title": json_res["title"], "author": json_res["author"],
-                    "category": request.json["category"], "url": request.json["url"]}
-            book_model.book_add(book)
-            response = jsonify({"books": BooksModel.all_books})
+
+            # creating new book instance
+            new_book = BooksModel()
+            new_book.id = json_res["id"]
+            new_book.title = json_res["title"]
+            new_book.author = json_res["author"]
+            new_book.category = json_res["category"]
+            new_book.url = json_res["url"]
+            new_book.book_add()
+
+            response = jsonify({"books": BooksModel.book_all()})
             response.status_code = 201
             return response
 
@@ -46,9 +53,16 @@ def create_app(config_name):
     def get_edit_remove_book(id):
         """Retrieve ,Edit or Remove book using Id"""
 
-        # get specific book using title
+        # get specific book using id
         if request.method == 'GET':
-            response = jsonify(book_model.book_specific(id))
+            book = BooksModel.book_specific(id)
+            response = jsonify({
+                "id": book.id,
+                "title": book.title,
+                "author": book.author,
+                "category": book.category,
+                "url": book.url
+            })
             response.status_code = 200
             return response
 
@@ -66,7 +80,7 @@ def create_app(config_name):
             response.status_code = 200
             return response
         elif request.method == 'DELETE':
-            book_model.book_delete(id)
+            BooksModel.book_delete(id)
             return "message: {} deleted successfully".format(id), 404
 
     @app.route("/api/users/books/<int:id>", methods=["POST"])
