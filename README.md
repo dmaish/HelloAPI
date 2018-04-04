@@ -7,8 +7,11 @@ HelloApi is a library book borrowing and restocking api.It helps an admin user a
 
 ## Endpoint functionality
 
-| Endpoints       | Functionality     | method |
-| -------------   |:-------------:    | -----: |
-| /api/books      | add a new book    | POST   |
-| /api/book/id    | get specific book | GET    |
-| /api/book/id    | edit specific book| PUT    |
+| Endpoints           | Functionality     | method |
+| -------------       |:-------------:    | -----: |
+| /api/books          | add a new book    | POST   |
+| /api/book/id        | get specific book | GET    |
+| /api/book/id        | edit specific book| PUT    |
+| /api/auth/register  | user registration | POST   |
+| /api/auth/login     | user login        | POST   |
+| /api/users/id       | borrow a book     | POST   |
