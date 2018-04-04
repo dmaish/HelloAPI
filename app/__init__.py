@@ -4,7 +4,7 @@ from flask_api import FlaskAPI
 from flask import request, jsonify, abort
 # local imports
 from config import app_config
-from models import *
+from app.models import *
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 
 
@@ -20,7 +20,7 @@ def create_app(config_name):
     # importation of models should be here wen it comes to database
 
     @app.route('/api/books/', methods=['GET', 'POST'])
-    @jwt_required
+    # @jwt_required
     def list_books_new_book():
 
         if request.method == 'POST':
