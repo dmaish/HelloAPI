@@ -45,20 +45,16 @@ class BooksModel:
                 return book
 
     # FINISH UP THIS CODE THAT REPLACES THE UPDATED BOOK WITH THE OLD BOOK IN THE all_books LIST
-    def book_update(self, id, book_update):
+    @staticmethod
+    def update(id, book_update):
         """method returns specific book according to book id"""
-        old_book = None
-        for each_book in all_books:
-            if each_book["id"] == id:
-                old_book = each_book
-        # finding the index of the book with matching title
-        for i, j in enumerate(all_books):
-            if j == old_book:
-                # editing the books list
-                self.all_books[i] = book_update
-                edited_book = self.all_books[i]
+        edited_book = None
+        for i, book in enumerate(all_books):
+            if book.id == id:
+                all_books[i] = book_update
+                edited_book = all_books[i]
 
-                return edited_book
+        return edited_book
 
     @staticmethod
     def book_delete(id):

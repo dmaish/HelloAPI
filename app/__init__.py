@@ -10,8 +10,6 @@ from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 
 # the following method accepts environment variable as its variable
 def create_app(config_name):
-    # adding a new book to the library
-    book_model = BooksModel()
 
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
@@ -43,7 +41,7 @@ def create_app(config_name):
         # listing all available books in the library
         elif request.method == 'GET':
 
-            response = jsonify({"books": book_model.book_all()})
+            response = jsonify({"books": BooksModel.book_all()})
             response.status_code = 200
             return response
 
@@ -69,14 +67,22 @@ def create_app(config_name):
         # edit a specific book using title
         elif request.method == 'PUT':
             json_res = request.get_json(force=True)
-            book_update = {
-                "id": json_res["id"],
-                "title": json_res["title"],
-                "author": json_res["author"],
-                "category": json_res["category"],
-                "url": json_res["url"]
-            }
-            response = jsonify(book_model.book_update(id, book_update))
+            book_update = BooksModel()
+            book_update.id = json_res["id"]
+            book_update.title = json_res["title"]
+            book_update.author = json_res["author"]
+            book_update.category = json_res["category"]
+            book_update.url = json_res["url"]
+
+            # get edited book
+            edited_book = BooksModel.update(id, book_update)
+            response = jsonify({
+                "id": edited_book.id,
+                "title": edited_book.title,
+                "author": edited_book.author,
+                "category": edited_book.category,
+                "url": edited_book.url
+            })
             response.status_code = 200
             return response
         elif request.method == 'DELETE':
