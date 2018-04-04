@@ -6,7 +6,7 @@ import app.models
 
 class AuthenticateTestcase(unittest.TestCase):
     def setUp(self):
-        self.app = create_app("testing")
+        self.app = create_app("testing")git
         self.client = self.app.test_client()
         # setting up the app's context
         self.app_context = self.app.app_context()

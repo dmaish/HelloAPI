@@ -20,7 +20,7 @@ def create_app(config_name):
     # importation of models should be here wen it comes to database
 
     @app.route('/api/books/', methods=['GET', 'POST'])
-    @jwt_required
+    # @jwt_required
     def list_books_new_book():
 
         if request.method == 'POST':

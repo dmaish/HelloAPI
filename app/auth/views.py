@@ -16,7 +16,6 @@ def user_register():
     # checking if user already exists
     user = User.get_by_email(email)
     if not user:
-        try:
             create_user = User()
             create_user.username = username
             create_user.email = email
@@ -26,16 +25,13 @@ def user_register():
             response = {
                 "message": "You registered successfully"
             }
+
             return jsonify(response), 201
-        except Exception as e:
-            response = {
-                "message": str(e)
-            }
-            return jsonify(response), 401
 
     else:
         response = {"message": "User already exists.Please login"}
-        return response, 202
+
+        return jsonify(response), 202
 
 
 @auth.route("/api/auth/login", methods=["POST"])
@@ -45,9 +41,8 @@ def user_login():
     password = request.data["password"]
     user = User.get_by_email(email)
 
-    # get the user if they exist and valid password...
+    # get the user if they exist and if they gave valid password...
     if user and user.check_password(password):
-        try:
             # generate the access token
             access_token = create_access_token(identity=email)
             if access_token:
@@ -55,14 +50,9 @@ def user_login():
                     "message": "You logged in successfully",
                     "access_token": access_token
                 }
+
                 return jsonify(response), 200
 
-        except Exception as e:
-            # create response containing a string error message
-            response = {
-                "message": str(e)
-            }
-            return jsonify(response), 500
     else:
         # user doesn't exist
         response = {
@@ -80,8 +70,8 @@ def password_reset():
     user.password_set(new_password)
 
     response = jsonify({"message": "password reset successful"})
-    response.status_code = 200
-    return response
+
+    return response, 200
 
 
 @auth.route("/api/auth/logout", methods=["DELETE"])
@@ -90,7 +80,7 @@ def logout():
     """endpoint for revoking the current users json web token"""
     jti = get_raw_jwt()['jti']
     Blacklist().blacklist.append(jti)
-    return jsonify({"msg": "Successfully logged out"})
+    return jsonify({"message": "Successfully logged out"})
 
 
 

@@ -42,7 +42,9 @@ class BooksModel:
             if j == old_book:
                 # editing the books list
                 self.all_books[i] = book_update
-        return self.all_books
+                edited_book = self.all_books[i]
+
+                return edited_book
 
     def book_delete(self, id):
         """method deletes specific book according to book id"""
