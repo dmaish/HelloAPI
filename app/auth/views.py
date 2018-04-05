@@ -9,34 +9,38 @@ from flask_jwt_extended import (create_access_token,
 
 @auth.route("/api/auth/register", methods=['POST'])
 def user_register():
-    # TODO in the event of a database switch the following request with the database query
+    """method to create new user"""
     username = request.data["username"]
     email = request.data["email"]
     password = request.data["password"]
     # checking if user already exists
     user = User.get_by_email(email)
     if not user:
-            new_user = User()
-            new_user.username = username
-            new_user.email = email
-            new_user.password_set(password)
-            new_user.save_user()
+        try:
+            create_user = User()
+            create_user.username = username
+            create_user.email = email
+            create_user.password_set(password)
+            create_user.save_user()
 
             response = {
                 "message": "You registered successfully"
             }
-
             return jsonify(response), 201
+        except Exception as e:
+            response = {
+                "message": str(e)
+            }
+            return jsonify(response), 401
 
     else:
-        response = {"message": "User already exists.Please login"}
-
-        return jsonify(response), 202
+        response = jsonify({"message": "User already exists.Please login"})
+        return response, 202
 
 
 @auth.route("/api/auth/login", methods=["POST"])
 def user_login():
-    """method to handle login of registered users"""
+    """method to login registered users"""
     email = request.data["email"]
     password = request.data["password"]
     user = User.get_by_email(email)
@@ -62,14 +66,13 @@ def user_login():
 
 
 @auth.route("/api/auth/reset-password", methods=["POST"])
-@jwt_required
 def password_reset():
-    email = get_jwt_identity()
-    user = User.get_by_email(email)
+    """method to reset user password"""
     new_password = request.data["password"]
-    user.password_set(new_password)
+    User().password_set(new_password)
 
-    response = jsonify({"message": "password reset successful"})
+    response = jsonify({"message": "password reset successful",
+                        "new": new_password})
 
     return response, 200
 
@@ -81,34 +84,3 @@ def logout():
     jti = get_raw_jwt()['jti']
     Blacklist().blacklist.append(jti)
     return jsonify({"message": "Successfully logged out"})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

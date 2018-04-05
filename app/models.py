@@ -1,16 +1,17 @@
 from time import strftime, gmtime
 
-import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import abort, current_app
-from datetime import datetime
 
-all_users = []           # list containing all users in the library
-borrowed_books = []      # list containing id of books borrowed and username who borrowed
-all_books = []           # all books in the library
+# all books in the library
+all_books = []
+# all users
+all_users = []
+# all books borrowed
+borrowed_books = []
 
 
 class BooksModel:
+    """class facilitating storing and manipulation of books"""
     def __init__(self):
         self.id = None
         self.title = None
@@ -38,7 +39,7 @@ class BooksModel:
         return books
 
     @staticmethod
-    def book_specific(id):
+    def get_specific_book(id):
         """method returns specific book according to book id"""
         for book in all_books:
             if book.id == id:
@@ -49,9 +50,9 @@ class BooksModel:
     def update(id, book_update):
         """method returns specific book according to book id"""
         edited_book = None
-        for i, book in enumerate(all_books):
+        for index, book in enumerate(all_books):
             if book.id == id:
-                all_books[i] = book_update
+                all_books[index] = book_update
                 edited_book = all_books[i]
 
         return edited_book
@@ -59,13 +60,13 @@ class BooksModel:
     @staticmethod
     def book_delete(id):
         """method deletes specific book according to book id"""
-        for i, book in enumerate(all_books):
+        for index, book in enumerate(all_books):
             if book.id == id:
-                del all_books[i]
+                del all_books[index]
 
 
 class User:
-    """This class defines the users model"""
+    """class facilitating storing and manipulation of users"""
     def __init__(self):
         self.username = None
         self.email = None
@@ -74,37 +75,40 @@ class User:
         self.books_by_particular_user = []
 
     def password_set(self, password):
+        """hashes a users password before storage"""
         self.password = generate_password_hash(password)
 
     def check_password(self, password):
+        """validates if password is correct"""
         return check_password_hash(self.password, password)
 
     def save_user(self):
+        """saves users and their data"""
         all_users.append(self)
 
     def user_book_borrow(self, id):
-        book = BooksModel.book_specific()
+        """creates borrowing records after user borrows a record"""
+        book = BooksModel.book_specific(id)
         self.books_by_particular_user.append(book)
         # appending to the borrowed books record
         borrow_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-        borrowing_record = BorrowingRecord(book, book["title"],
-                                           borrow_time, self)
+        borrowing_record = BorrowingRecord(book, book["title"], borrow_time, self)
+        borrowed_books.append(borrowing_record)
 
     @staticmethod
     def get_by_email(email):
+        """gets a specific user using the email"""
         for user in all_users:
             if user.email == email:
                 return user
 
 
 class BorrowingRecord:
+    """class facilitating in storage of book borrowing records and their manipulation"""
     def __init__(self, title, borrow_time, user):
         self.title = title
         self.borrow_time = borrow_time,
         self.user = user
-
-    def save_record(self):
-        self.save_record(self)
 
 
 class Blacklist:
