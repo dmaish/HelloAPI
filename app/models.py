@@ -1,6 +1,7 @@
-from time import strftime, gmtime
-
+# global imports
 from werkzeug.security import generate_password_hash, check_password_hash
+from time import strftime, gmtime
+from flask import jsonify
 
 # all books in the library
 all_books = []
@@ -11,20 +12,22 @@ borrowed_books = []
 
 
 class BooksModel:
+    book_id = 1
     """class facilitating storing and manipulation of books"""
-    def __init__(self):
-        self.id = None
-        self.title = None
-        self.author = None
-        self.category = None
-        self.url = None
+    def __init__(self, title, author, category, url):
+        self.id = BooksModel.book_id
+        self.title = title
+        self.author = author
+        self.category = category
+        self.url = url
+        BooksModel.book_id += 1
 
-    def book_add(self):
+    def add_new_book(self):
         """ method to add book dictionaries to the books list"""
         all_books.append(self)
 
     @staticmethod
-    def book_all():
+    def get_all_books():
         """method returns all books in json form"""
         books = []
         for each_book in all_books:
@@ -47,31 +50,30 @@ class BooksModel:
 
     # FINISH UP THIS CODE THAT REPLACES THE UPDATED BOOK WITH THE OLD BOOK IN THE all_books LIST
     @staticmethod
-    def update(id, book_update):
+    def update_specific_book(id, book_update):
         """method returns specific book according to book id"""
         edited_book = None
         for index, book in enumerate(all_books):
             if book.id == id:
                 all_books[index] = book_update
-                edited_book = all_books[i]
+                edited_book = all_books[index]
 
         return edited_book
 
     @staticmethod
-    def book_delete(id):
+    def delete_specific_books(id):
         """method deletes specific book according to book id"""
         for index, book in enumerate(all_books):
             if book.id == id:
                 del all_books[index]
 
 
-class User:
+class UsersModel:
     """class facilitating storing and manipulation of users"""
-    def __init__(self):
-        self.username = None
-        self.email = None
-        self.password = None
-        self.is_admin = False
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email
+        self.password = password
         self.books_by_particular_user = []
 
     def password_set(self, password):
@@ -101,6 +103,13 @@ class User:
         for user in all_users:
             if user.email == email:
                 return user
+
+    @staticmethod
+    def response_field_is_empty():
+        response = {
+            "message": "fill in all fields before submitting"
+        }
+        return jsonify(response), 409
 
 
 class BorrowingRecord:

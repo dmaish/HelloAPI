@@ -1,10 +1,11 @@
-from . import auth
+# global imports
 from flask import request, jsonify
-from app.models import User, Blacklist
+from app.models import UsersModel, Blacklist
 from flask_jwt_extended import (create_access_token,
-                                get_jwt_identity,
                                 jwt_required,
                                 get_raw_jwt)
+# local imports
+from . import auth
 
 
 @auth.route("/api/auth/register", methods=['POST'])
@@ -12,21 +13,23 @@ def user_register():
     """method to create new user"""
     username = request.data["username"]
     email = request.data["email"]
-    password = request.data["password"]
+    password_with_spaces = request.data["password"]
+
+    # remove trailing spaces in password
+    password = "".join(password_with_spaces.split(password_with_spaces))
+
     # checking if user already exists
-    user = User.get_by_email(email)
+    user = UsersModel.get_by_email(email)
     if not user:
         try:
-            create_user = User()
-            create_user.username = username
-            create_user.email = email
-            create_user.password_set(password)
+            password = UsersModel.password_set(password)
+            create_user = UsersModel(username, email, password)
             create_user.save_user()
 
             response = {
                 "message": "You registered successfully"
             }
-            return jsonify(response), 201
+            return jsonify(response)
         except Exception as e:
             response = {
                 "message": str(e)
@@ -35,15 +38,17 @@ def user_register():
 
     else:
         response = jsonify({"message": "User already exists.Please login"})
-        return response, 202
+        return response, 409
 
 
 @auth.route("/api/auth/login", methods=["POST"])
 def user_login():
     """method to login registered users"""
     email = request.data["email"]
-    password = request.data["password"]
-    user = User.get_by_email(email)
+    user = UsersModel.get_by_email(email)
+    password_with_spaces = request.data["password"]
+    # remove trailing spaces in password
+    password = "".join(password_with_spaces.split(password_with_spaces))
 
     # get the user if they exist and if they gave valid password...
     if user and user.check_password(password):
@@ -69,7 +74,7 @@ def user_login():
 def password_reset():
     """method to reset user password"""
     new_password = request.data["password"]
-    User().password_set(new_password)
+    UsersModel().password_set(new_password)
 
     response = jsonify({"message": "password reset successful",
                         "new": new_password})

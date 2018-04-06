@@ -16,8 +16,10 @@ def create_app(config_name):
     jwt = JWTManager(app)
     # importation of models should be here wen it comes to database
 
-    # importing the authentication blueprint and register it on the app
+    # registering the authentication and endpoints blueprints
     from .auth import auth
     app.register_blueprint(auth)
+    from .endpoints import endpoints
+    app.register_blueprint(endpoints)
 
     return app
