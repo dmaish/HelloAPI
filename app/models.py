@@ -1,9 +1,6 @@
 from time import strftime, gmtime
 
-import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import abort, current_app
-from datetime import datetime
 
 all_users = []  # list containing all users in the library
 borrowed_books = []  # list containing id of books borrowed and username who borrowed
@@ -94,7 +91,7 @@ class User:
 class BorrowingRecord:
     def __init__(self, title, borrow_time, user):
         self.title = title
-        self.borrow_time =borrow_time,
+        self.borrow_time = borrow_time,
         self.user = user
 
     def save_record(self):
