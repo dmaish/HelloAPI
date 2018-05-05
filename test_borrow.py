@@ -1,7 +1,7 @@
 import unittest
 import json
 from app import create_app
-import app.models
+import app.old_models
 
 
 class BorrowTestCase(unittest.TestCase):

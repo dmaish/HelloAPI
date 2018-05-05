@@ -3,7 +3,7 @@ from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 # local imports
-from app.models import *
+from app.old_models import *
 from . import endpoints
 
 

@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 # local imports
 from config import app_config
-from app.models import *
+from app.old_models import *
 from flask_jwt_extended import JWTManager
 
 db = SQLAlchemy()

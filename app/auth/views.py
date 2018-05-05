@@ -1,6 +1,6 @@
 from . import auth
 from flask import request, jsonify
-from app.models import User, Blacklist
+from app.old_models import User, Blacklist
 from flask_jwt_extended import (create_access_token,
                                 get_jwt_identity,
                                 jwt_required,
