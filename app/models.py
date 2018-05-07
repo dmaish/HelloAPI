@@ -13,15 +13,23 @@ class User(db.Model):
     email = db.Column(db.String(60), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     is_admin = db.Column(db.Boolean, default=False)
-    borrow_records = db.relationship('Borrow_Record', backref='book', lazy='dynamic')
+    borrow_records = db.relationship('Borrow_Record', backref='user', lazy='dynamic')
 
-    def password_set(self, password):
+    # Todo study property(get-set) and use it to set the password
+    @staticmethod
+    def password_set(password):
         """method to set hashed password"""
-        self.password_hash = generate_password_hash(password)
+        User.password_hash = generate_password_hash(password)
 
     def check_password(self, input_password):
         """method to check if user password matches hashed password"""
         return check_password_hash(self.password_hash, input_password)
+
+    @staticmethod
+    def get_user_by_email(email):
+        """method to get a user through email if user is registered"""
+        user = User.query.filter_by(email=email).first()
+        return user
 
     def __repr__(self):
         return '<User:{}>'.format(self.username)

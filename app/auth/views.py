@@ -1,10 +1,11 @@
 from . import auth
 from flask import request, jsonify
-from app.old_models import User, Blacklist
+from app.models import User
 from flask_jwt_extended import (create_access_token,
                                 get_jwt_identity,
                                 jwt_required,
                                 get_raw_jwt)
+from app import db
 
 
 @auth.route("/api/auth/register", methods=['POST'])
@@ -13,25 +14,26 @@ def user_register():
     username = request.data["username"]
     email = request.data["email"]
     password = request.data["password"]
+
     # checking if user already exists
-    user = User.get_by_email(email)
-    if not user:
-            create_user = User()
-            create_user.username = username
-            create_user.email = email
-            create_user.password_set(password)
-            create_user.save_user()
+    if User.get_user_by_email(email):
+        response = {"message": "User already exists.Please login"}
+
+        return jsonify(response), 202
+    else:
+            user = User(username=username,
+                        email=email,
+                        password_hash=User.password_set(password))
+
+            # add new user to database
+            db.session.add(user)
+            db.session.commit()
 
             response = {
                 "message": "You registered successfully"
             }
 
             return jsonify(response), 201
-
-    else:
-        response = {"message": "User already exists.Please login"}
-
-        return jsonify(response), 202
 
 
 @auth.route("/api/auth/login", methods=["POST"])

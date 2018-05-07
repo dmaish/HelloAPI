@@ -3,6 +3,7 @@ class Config(object):
     """common configurations that are common across all environments"""
 
     SQLALCHEMY_DATABASE_URI = 'postgresql:///hello_books_db'
+    SQLALCHEMY_ECHO = True
     DEBUG = True
 
 
@@ -14,13 +15,13 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     """production configurations"""
-
+    SQLALCHEMY_ECHO = False
     DEBUG = False
 
 
 class TestingConfig(Config):
     """ Testing configurations """
-    SQLALCHEMY_DATABASE_URI = 'postgresql:///test_hello_books_db'
+    # SQLALCHEMY_DATABASE_URI = 'postgresql:///test_hello_books_db'
     TESTING = True
 
 
