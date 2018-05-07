@@ -30,7 +30,7 @@ def user_register():
             db.session.commit()
 
             response = {
-                "message": "You registered successfully"
+                "message": "you registered successfully"
             }
 
             return jsonify(response), 201

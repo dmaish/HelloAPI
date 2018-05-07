@@ -1,7 +1,7 @@
 import unittest
 import json
-from app import create_app
-import app.old_models
+from app import create_app, db
+from app import models
 
 
 class AuthenticateTestcase(unittest.TestCase):
@@ -9,7 +9,11 @@ class AuthenticateTestcase(unittest.TestCase):
         self.app = create_app("testing")
         self.client = self.app.test_client()
         # setting up the app's context
-        self.app_context = self.app.app_context()
+        # binds the app to the current context
+        with self.app.app_context():
+            # create all tables
+            db.create_all()
+
         self.test_user = {
             "username": "testUser",
             "email": "testEmail@gmail.com",
@@ -22,7 +26,8 @@ class AuthenticateTestcase(unittest.TestCase):
         # getting the results returned in json format
         result = json.loads(response.data.decode())
         # assert that the request contains a success message and a 201 status code
-        self.assertEqual(response.status_code, 202)
+        self.assertEqual(result["message"], "you registered successfully")
+        self.assertEqual(response.status_code, 201)
 
     def test_already_registered_user(self):
         """Test that a user can't register twice"""
@@ -66,7 +71,10 @@ class AuthenticateTestcase(unittest.TestCase):
         # Todo make sure to complete the password reset test
 
     def tearDown(self):
-        self.app_context
+        with self.app.app_context():
+            # drop all tables
+            db.session.remove()
+            db.drop_all()
 
 
 if __name__ == '__main__':
