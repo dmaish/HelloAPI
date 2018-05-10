@@ -5,7 +5,7 @@ from flask_jwt_extended import (create_access_token,
                                 get_jwt_identity,
                                 jwt_required,
                                 get_raw_jwt)
-from app import db
+from app import db, Blacklist
 
 
 @auth.route("/api/auth/register", methods=['POST'])
@@ -23,7 +23,7 @@ def user_register():
     else:
             user = User(username=username,
                         email=email,
-                        password_hash=User.password_set(password))
+                        password=password)
 
             # add new user to database
             db.session.add(user)
@@ -41,10 +41,10 @@ def user_login():
     """method to handle login of registered users"""
     email = request.data["email"]
     password = request.data["password"]
-    user = User.get_by_email(email)
 
     # get the user if they exist and if they gave valid password...
-    if user and user.check_password(password):
+    registered_user = User.get_user_by_email(email)
+    if registered_user is not None and registered_user.check_password(password):
             # generate the access token
             access_token = create_access_token(identity=email)
             if access_token:

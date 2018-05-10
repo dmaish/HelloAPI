@@ -41,7 +41,7 @@ class AuthenticateTestcase(unittest.TestCase):
     def test_user_login(self):
         """Test if registered user can be logged in """
         register_response = self.client.post("/api/auth/register", data=self.test_user)
-        self.assertEqual(register_response.status_code, 202)
+        self.assertEqual(register_response.status_code, 201)
         login_response = self.client.post("/api/auth/login", data=self.test_user)
 
         # get results after login attempt in json format

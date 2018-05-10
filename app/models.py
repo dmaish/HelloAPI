@@ -15,11 +15,15 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     borrow_records = db.relationship('Borrow_Record', backref='user', lazy='dynamic')
 
-    # Todo study property(get-set) and use it to set the password
-    @staticmethod
-    def password_set(password):
-        """method to set hashed password"""
-        User.password_hash = generate_password_hash(password)
+    @property
+    def password(self):
+        """property decorator replaces getters\setters"""
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        """set password to a hashed password"""
+        self.password_hash = generate_password_hash(password)
 
     def check_password(self, input_password):
         """method to check if user password matches hashed password"""
