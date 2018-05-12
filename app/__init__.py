@@ -21,10 +21,10 @@ def create_app(config_name):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     jwt = JWTManager(app)
 
-    # importing the authentication and endpoints blueprints and register them on the app
+    # importing the authentication and admin blueprints and register them on the app
     from .auth import auth
     app.register_blueprint(auth)
-    from .endpoints import endpoints
-    app.register_blueprint(endpoints)
+    from .admin import admin
+    app.register_blueprint(admin)
 
     return app

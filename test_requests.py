@@ -1,6 +1,9 @@
+# third party imports
 import unittest
 import json
-from app import create_app, BooksModel
+
+# local imports
+from app import create_app, db
 
 
 class BookListApiTestcase(unittest.TestCase):
@@ -8,18 +11,21 @@ class BookListApiTestcase(unittest.TestCase):
 
     def setUp(self):
         """test variables and initialisation"""
-        self.app = create_app('testing')
+        self.app = create_app("testing")
         self.client = self.app.test_client()
-        self.app_context = self.app.app_context()
+        # setting up the app's context
+        # binds the app to the current context
+        with self.app.app_context():
+            # create all tables
+            db.create_all()
+
         self.book = {
-            "id": 1,
             "title": "The Da Vinci Code",
             "author": "Dan Brown",
             "category": "Mystery Thriller",
             "url": "http://www.bbhsfocus.com/2016/10/review-of-the-da-vinci-code-by-dan-brown/"
         }
         self.book2 = {
-            "id": 1,
             "title": "Inferno",
             "author": "Dan Brown",
             "category": "Mystery Thriller",
@@ -37,7 +43,9 @@ class BookListApiTestcase(unittest.TestCase):
 
     def tearDown(self):
         with self.app.app_context():
-            BooksModel.all_books
+            # drop all tables
+            db.session.remove()
+            db.drop_all()
 
     def get_access_token(self, user):
         """registers and generates an access token for the user"""
@@ -74,7 +82,12 @@ class BookListApiTestcase(unittest.TestCase):
     def test_get_book_by_id(self):
         """Test if book can be retrieved by id"""
         access_token = self.get_access_token(self.user_data)
-        get_res = self.client.get('/api/books/{}'.format(1), headers={
+        post_res = self.client.post('/api/books/', data=json.dumps(self.book), headers={
+            'content-type': 'application/json',
+            'Authorization': 'Bearer {}'.format(access_token)
+        })
+        self.assertEqual(post_res.status_code, 201)
+        get_res = self.client.get('/api/books/1', headers={
             'content-type': 'application/json',
             'Authorization': 'Bearer {}'.format(access_token)
         })
@@ -90,12 +103,12 @@ class BookListApiTestcase(unittest.TestCase):
             'Authorization': 'Bearer {}'.format(access_token)
         })
         self.assertEqual(post_res.status_code, 201)
-        put_res = self.client.put('/api/books/{}'.format(self.book["id"]), data=json.dumps(self.book2), headers={
+        put_res = self.client.put('/api/books/1', data=json.dumps(self.book2), headers={
             'content-type': 'application/json',
             'Authorization': 'Bearer {}'.format(access_token)
         })
         self.assertEqual(put_res.status_code, 200)
-        results = self.client.get('/api/books/{}'.format(self.book["id"]), headers={
+        results = self.client.get('/api/books/1', headers={
             'content-type': 'application/json',
             'Authorization': 'Bearer {}'.format(access_token)
         })
