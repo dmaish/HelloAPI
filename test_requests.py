@@ -49,8 +49,8 @@ class BookListApiTestcase(unittest.TestCase):
 
     def get_access_token(self, user):
         """registers and generates an access token for the user"""
-        self.client.post("/api/auth/register", data=user)
-        response_login = self.client.post("/api/auth/login", data=user)
+        self.client.post("/api/auth/register/", data=user)
+        response_login = self.client.post("/api/auth/login/", data=user)
         result = json.loads(response_login.data)
         return result["access_token"]
 

@@ -10,7 +10,6 @@ class BorrowTestCase(unittest.TestCase):
         self.app.context = self.app.app_context()
         self.client = self.app.test_client()
         self.book = {
-            "id": 1,
             "title": "The Da Vinci Code",
             "author": "Dan Brown",
             "category": "Mystery Thriller",

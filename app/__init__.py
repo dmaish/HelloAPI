@@ -5,7 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 # local imports
 from config import app_config
-from app.old_models import *
 from flask_jwt_extended import JWTManager
 
 db = SQLAlchemy()
@@ -21,10 +20,12 @@ def create_app(config_name):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     jwt = JWTManager(app)
 
-    # importing the authentication and admin blueprints and register them on the app
+    # importing the authentication, admin and user blueprints and register them on the app
     from .auth import auth
     app.register_blueprint(auth)
     from .admin import admin
     app.register_blueprint(admin)
+    from .user import user
+    app.register_blueprint(user)
 
     return app

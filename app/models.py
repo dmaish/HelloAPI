@@ -67,10 +67,4 @@ class Borrow_Record(db.Model):
     return_flag = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
-        return '<Borrow_Record:{}, {}>'.format(self.book_borrowed, self.user_borrowed)
-
-
-
-
-
-
+        return '<Borrow_Record:{}>'.format(self.book_borrowed, self.user_borrowed)

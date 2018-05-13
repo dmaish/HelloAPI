@@ -1,14 +1,14 @@
 from . import auth
 from flask import request, jsonify
-from app.models import User
+from app.models import *
 from flask_jwt_extended import (create_access_token,
                                 get_jwt_identity,
                                 jwt_required,
                                 get_raw_jwt)
-from app import db, Blacklist
+from app import db
 
 
-@auth.route("/api/auth/register", methods=['POST'])
+@auth.route("/api/auth/register/", methods=['POST'])
 def user_register():
     # TODO in the event of a database switch the following request with the database query
     username = request.data["username"]
@@ -36,7 +36,7 @@ def user_register():
             return jsonify(response), 201
 
 
-@auth.route("/api/auth/login", methods=["POST"])
+@auth.route("/api/auth/login/", methods=["POST"])
 def user_login():
     """method to handle login of registered users"""
     email = request.data["email"]
@@ -63,25 +63,28 @@ def user_login():
         return jsonify(response), 401
 
 
-@auth.route("/api/auth/reset-password", methods=["POST"])
+@auth.route("/api/auth/reset-password/", methods=["POST"])
 @jwt_required
 def password_reset():
-    email = get_jwt_identity()
-    user = User.get_by_email(email)
     new_password = request.data["password"]
-    user.password_set(new_password)
+
+    email = get_jwt_identity()
+    user = User.get_user_by_email(email)
+
+    user.password = new_password
+    db.session.commit()
 
     response = jsonify({"message": "password reset successful"})
 
     return response, 200
 
 
-@auth.route("/api/auth/logout", methods=["DELETE"])
+@auth.route("/api/auth/logout/", methods=["DELETE"])
 @jwt_required
 def logout():
     """endpoint for revoking the current users json web token"""
     jti = get_raw_jwt()['jti']
-    Blacklist().blacklist.append(jti)
+    # Blacklist().blacklist.append(jti)
     return jsonify({"message": "Successfully logged out"})
 
 

@@ -4,7 +4,6 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models import Book
 
 # local imports
-from ..old_models import *
 from . import admin
 from app import db
 
@@ -90,21 +89,3 @@ def get_edit_remove_book(id):
         db.session.delete(book)
         db.session.commit()
         return "message: {} deleted successfully".format(id), 404
-
-
-@admin.route("/api/users/books/<int:id>", methods=["POST"])
-# @jwt_required
-def borrow_book(id):
-    """Retrieve a specific book and allow user to borrow"""
-    # get details of book being borrowed
-    book = BooksModel().book_specific(id)
-
-    # get user borrowing book
-    user_email = get_jwt_identity()
-    user = User().get_by_email(user_email)
-
-    response = {
-        "user": user.username,
-        "book_borrowed": book["title"]
-    }
-    return jsonify(response), 200
