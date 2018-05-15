@@ -18,6 +18,20 @@ class AuthenticateTestcase(unittest.TestCase):
             "email": "testEmail@gmail.com",
             "password": "testpassword"
         }
+        self.login_credentials = {
+            "email": "testEmail@gmail.com",
+            "password": "testpassword"
+        }
+        self.alternative_password = {
+            "password": "alternative_password"
+        }
+
+    def get_access_token(self):
+        """method to login and return the access token"""
+        response = self.client.post("/api/auth/login/", data=self.login_credentials)
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.data.decode())
+        return result["access_token"]
 
     def test_registration(self):
         """Testing if user can register"""
@@ -62,12 +76,8 @@ class AuthenticateTestcase(unittest.TestCase):
         self.assertEqual(response_login.status_code, 401)
         self.assertEqual(result["message"], "Invalid email or password, Please try again")
 
-    def test_password_reset(self):
-        """Test reset of user password"""
-        # register a test user then log the
-        register_response = self.client.post("/api/auth/register/", data=self.test_user)
-        self.assertEqual(register_response.status_code, 202)
-        # Todo make sure to complete the password reset test
+    # def test_password_reset(self):
+    # TODo make sure to write test to reset password
 
     def tearDown(self):
         with self.app.app_context():
@@ -78,6 +88,4 @@ class AuthenticateTestcase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
 
