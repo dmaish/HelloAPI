@@ -1,10 +1,13 @@
-from . import auth
 from flask import request, jsonify
-from app.models import *
 from flask_jwt_extended import (create_access_token,
                                 get_jwt_identity,
                                 jwt_required,
                                 get_raw_jwt)
+
+# local imports
+import logging
+from . import auth
+from app.models import *
 from app import db
 
 
@@ -71,6 +74,7 @@ def password_reset():
     email = get_jwt_identity()
     user = User.get_user_by_email(email)
 
+    logging.debug("user email", email)
     user.password = new_password
     db.session.commit()
 
@@ -86,34 +90,3 @@ def logout():
     jti = get_raw_jwt()['jti']
     # Blacklist().blacklist.append(jti)
     return jsonify({"message": "Successfully logged out"})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

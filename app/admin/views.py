@@ -1,17 +1,28 @@
 # global imports
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..models import Book
+from ..models import *
 
 # local imports
 from . import admin
 from app import db
 
 
+# check if logged in user is admin
+def check_if_user_is_admin():
+    email = get_jwt_identity()
+    user = User.get_user_by_email(email)
+    if not user.is_admin:
+        abort(403)
+
+
 @admin.route('/api/books/', methods=['GET', 'POST'])
-# @jwt_required
+@jwt_required
 def list_books_new_book():
+
     if request.method == 'POST':
+        # checking if logged in user is admin
+        check_if_user_is_admin()
 
         json_res = request.get_json(force=True)
         title = json_res["title"]
@@ -28,6 +39,7 @@ def list_books_new_book():
 
     # listing all available books in the library
     elif request.method == 'GET':
+
         books = []
 
         all_books = Book.query.all()
@@ -47,9 +59,10 @@ def list_books_new_book():
 
 # getting a specific book using the id as primary key
 @admin.route('/api/books/<int:id>', methods=['GET', 'PUT', 'DELETE'])
-# @jwt_required
+@jwt_required
 def get_edit_remove_book(id):
     """Retrieve ,Edit or Remove book using Id"""
+
     book = Book.query.filter_by(id=id).first()
 
     if request.method == 'GET':
@@ -62,6 +75,10 @@ def get_edit_remove_book(id):
 
     # edit a specific book using title
     elif request.method == 'PUT':
+
+        # checking if logged in user is admin
+        check_if_user_is_admin()
+
         json_res = request.get_json(force=True)
         book_update = {
             "title": json_res["title"],
@@ -86,6 +103,9 @@ def get_edit_remove_book(id):
         return response
 
     elif request.method == 'DELETE':
+        # checking if logged in user is admin
+        check_if_user_is_admin()
+
         db.session.delete(book)
         db.session.commit()
         return "message: {} deleted successfully".format(id), 404

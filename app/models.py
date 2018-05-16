@@ -1,3 +1,4 @@
+from werkzeug.exceptions import abort
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # local imports
