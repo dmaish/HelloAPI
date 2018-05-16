@@ -1,14 +1,25 @@
 import unittest
 import json
-from app import create_app
-import app.old_models
+from app import create_app, db
+from app.models import User
 
 
 class BorrowTestCase(unittest.TestCase):
     def setUp(self):
+        """test variables and initialisation"""
         self.app = create_app("testing")
-        self.app.context = self.app.app_context()
         self.client = self.app.test_client()
+        # setting up the app's context
+        # binds the app to the current context
+        with self.app.app_context():
+            # create all tables
+            db.create_all()
+
+            admin = User(username="admin", email="admin.gmail.com",
+                         password="adminpassword", is_admin=True)
+            db.session.add(admin)
+            db.session.commit()
+
         self.book = {
             "title": "The Da Vinci Code",
             "author": "Dan Brown",
@@ -16,9 +27,9 @@ class BorrowTestCase(unittest.TestCase):
             "url": "http://www.bbhsfocus.com/2016/10/review-of-the-da-vinci-code-by-dan-brown/"
         }
         self.user_data = {
-            "username": "daniel",
-            "email": "mainadaniel81@gmail.com",
-            "password": "bluestrokes"
+            "username": "admin",
+            "email": "admin.gmail.com",
+            "password": "adminpassword"
         }
         self.login_credentials = {
             "email": "mainadaniel81@gmail.com",
@@ -27,8 +38,8 @@ class BorrowTestCase(unittest.TestCase):
 
     def get_access_token(self, user):
         """registers and generates an access token for the user"""
-        self.client.post("/api/auth/register", data=user)
-        response_login = self.client.post("/api/auth/login", data=user)
+        self.client.post("/api/auth/register/", data=user)
+        response_login = self.client.post("/api/auth/login/", data=user)
         result = json.loads(response_login.data)
         return result["access_token"]
 
@@ -43,14 +54,16 @@ class BorrowTestCase(unittest.TestCase):
                                     })
         self.assertEqual(new_book.status_code, 201)
 
-        book = json.loads(new_book.data)
-        response_borrow = self.client.post("/api/users/books/{}".format(self.book["id"]),
+        response_borrow = self.client.post("/api/users/books/1",
                                            headers={'content-type': 'application/json',
                                                     'Authorization': 'Bearer {}'.format(access_token)})
         self.assertEqual(response_borrow.status_code, 200)
 
     def tearDown(self):
-        self.app.context
+        with self.app.app_context():
+            # drop all tables
+            db.session.remove()
+            db.drop_all()
 
 
 if __name__ == '__main__':

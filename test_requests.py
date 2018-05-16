@@ -4,6 +4,7 @@ import json
 
 # local imports
 from app import create_app, db
+from app.models import User
 
 
 class BookListApiTestcase(unittest.TestCase):
@@ -18,6 +19,10 @@ class BookListApiTestcase(unittest.TestCase):
         with self.app.app_context():
             # create all tables
             db.create_all()
+            admin = User(username="admin", email="admin@gmail.com",
+                         password="adminpassword", is_admin=True)
+            db.session.add(admin)
+            db.session.commit()
 
         self.book = {
             "title": "The Da Vinci Code",
@@ -32,13 +37,13 @@ class BookListApiTestcase(unittest.TestCase):
             "url": "http://www.bbhsfocus.com/2016/10/review-of-the-da-vinci-code-by-dan-brown/"
         }
         self.user_data = {
-            "username": "daniel",
-            "email": "mainadaniel81@gmail.com",
-            "password": "bluestrokes"
+            "username": "admin",
+            "email": "admin@gmail.com",
+            "password": "adminpassword"
         }
         self.login_credentials = {
-            "email": "mainadaniel81@gmail.com",
-            "password": "bluestrokes"
+            "email": "admin@gmail.com",
+            "password": "adminpassword"
         }
 
     def tearDown(self):

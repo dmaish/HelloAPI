@@ -15,15 +15,16 @@ def borrow_book(id):
 
     # get user borrowing book
     user_email = get_jwt_identity()
-    user = User.get_user_by_email(user_email)
+    borrower = User.get_user_by_email(user_email)
 
     # borrowing record
-    record = Borrow_Record(user=user, book=book)
+    record = Borrow_Record(user=borrower, book=book)
     db.session.add(record)
     db.session.commit()
 
     response = {
-        "return flag": record.user_borrowed,
-        "book_borrowed": record.book_id
+        "user borrowed": record.user_borrowed,
+        "book borrowed": record.book_id,
+        "message": "book borrowing success"
     }
     return jsonify(response), 200
