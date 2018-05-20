@@ -4,6 +4,7 @@ from flask import jsonify
 # local imports
 from . import user
 from ..models import *
+import logging
 
 
 @user.route("/api/users/books/<int:id>", methods=["POST"])
@@ -59,22 +60,33 @@ def return_book(id):
 @user.route("/api/users/books?returned=false", methods=["GET"])
 @jwt_required
 def get_books_not_returned_by_user():
-    return jsonify(), 200
+    """method to get unreturned books by logged in user"""
+    books = []
+    user_email = get_jwt_identity()
+    current_user = User.get_user_by_email(user_email)
+    unreturned_records = Borrow_Record.query.filter_by(user_borrowed=current_user.id,
+                                                       return_flag=False).all()
+
+    for each_record in unreturned_records:
+        book = Book.query.filter_by(id=each_record.book_id).first()
+        record = {"id": book.id,
+                  "title": book.title,
+                  "author": book.author,
+                  "category": book.category,
+                  "url": book.url}
+
+        books.append(record)
+
+    response = {
+        "unreturned books": books
+    }
+    return jsonify(response), 200
 
 
-@user.route("/api/users/books/", methods=["GET"])
+@user.route("/api/users/books", methods=["GET"])
 @jwt_required
 def get_user_borrowing_history():
-    return jsonify(), 200
-
-
-
-
-
-
-
-
-
+    """method to get the logged in user borrowing history"""
 
 
 

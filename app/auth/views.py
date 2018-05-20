@@ -11,9 +11,9 @@ from app.models import *
 from app import db
 
 
-@auth.route("/api/auth/register/", methods=['POST'])
+@auth.route("/api/auth/register", methods=['POST'])
 def user_register():
-    # TODO in the event of a database switch the following request with the database query
+    """method to register new user"""
     username = request.data["username"]
     email = request.data["email"]
     password = request.data["password"]
@@ -39,7 +39,7 @@ def user_register():
             return jsonify(response), 201
 
 
-@auth.route("/api/auth/login/", methods=["POST"])
+@auth.route("/api/auth/login", methods=["POST"])
 def user_login():
     """method to handle login of registered users"""
     email = request.data["email"]
@@ -66,9 +66,10 @@ def user_login():
         return jsonify(response), 401
 
 
-@auth.route("/api/auth/reset-password/", methods=["POST"])
+@auth.route("/api/auth/reset-password", methods=["POST"])
 @jwt_required
 def password_reset():
+    """method to reset password of logged in user"""
     new_password = request.data["password"]
 
     email = get_jwt_identity()
@@ -83,10 +84,10 @@ def password_reset():
     return response, 200
 
 
-@auth.route("/api/auth/logout/", methods=["DELETE"])
+@auth.route("/api/auth/logout", methods=["DELETE"])
 @jwt_required
 def logout():
-    """endpoint for revoking the current users json web token"""
+    """method for revoking the current user's json web token"""
     jti = get_raw_jwt()['jti']
     # Blacklist().blacklist.append(jti)
     return jsonify({"message": "Successfully logged out"})

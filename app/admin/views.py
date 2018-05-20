@@ -16,7 +16,7 @@ def check_if_user_is_admin():
         abort(403)
 
 
-@admin.route('/api/books/', methods=['GET', 'POST'])
+@admin.route('/api/books', methods=['GET', 'POST'])
 @jwt_required
 def list_books_new_book():
 
