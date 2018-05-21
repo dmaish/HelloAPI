@@ -87,6 +87,26 @@ def get_books_not_returned_by_user():
 @jwt_required
 def get_user_borrowing_history():
     """method to get the logged in user borrowing history"""
+    history = []
+    user_email = get_jwt_identity()
+    current_user = User.get_user_by_email(user_email)
+    records = Borrow_Record.query.filter_by(user_borrowed=current_user.id).all()
+
+    for each_record in records:
+        book = Book.query.filter_by(id=each_record.book_id).first()
+        record = {"title": book.title,
+                  "author": book.author,
+                  "category": book.category,
+                  "date_borrowed": "-",
+                  "date_returned": "-",
+                  "return_flag": each_record.return_flag}
+
+        history.append(record)
+
+    response = {
+        "borrowing history": history
+    }
+    return jsonify(response), 200
 
 
 
