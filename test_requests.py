@@ -54,15 +54,15 @@ class BookListApiTestcase(unittest.TestCase):
 
     def get_access_token(self, user):
         """registers and generates an access token for the user"""
-        self.client.post("/api/auth/register/", data=user)
-        response_login = self.client.post("/api/auth/login/", data=user)
+        self.client.post("/api/auth/register", data=user)
+        response_login = self.client.post("/api/auth/login", data=user)
         result = json.loads(response_login.data)
         return result["access_token"]
 
     def test_new_book_creation(self):
         """Test f API can create a new book(POST request)"""
         access_token = self.get_access_token(self.user_data)
-        post_res = self.client.post('/api/books/', data=json.dumps(self.book), headers={
+        post_res = self.client.post('/api/books', data=json.dumps(self.book), headers={
             'content-type': 'application/json',
             'Authorization': 'Bearer {}'.format(access_token)
         })
@@ -72,12 +72,12 @@ class BookListApiTestcase(unittest.TestCase):
     def test_get_all_books(self):
         """Test if API can get all books"""
         access_token = self.get_access_token(self.user_data)
-        post_res = self.client.post('/api/books/', data=json.dumps(self.book), headers={
+        post_res = self.client.post('/api/books', data=json.dumps(self.book), headers={
             'content-type': 'application/json',
             'Authorization': 'Bearer {}'.format(access_token)
         })
         self.assertEqual(post_res.status_code, 201)
-        get_res = self.client.get('/api/books/', headers={
+        get_res = self.client.get('/api/books', headers={
             'content-type': 'application/json',
             'Authorization': 'Bearer {}'.format(access_token)
         })
@@ -87,7 +87,7 @@ class BookListApiTestcase(unittest.TestCase):
     def test_get_book_by_id(self):
         """Test if book can be retrieved by id"""
         access_token = self.get_access_token(self.user_data)
-        post_res = self.client.post('/api/books/', data=json.dumps(self.book), headers={
+        post_res = self.client.post('/api/books', data=json.dumps(self.book), headers={
             'content-type': 'application/json',
             'Authorization': 'Bearer {}'.format(access_token)
         })
@@ -99,12 +99,10 @@ class BookListApiTestcase(unittest.TestCase):
         self.assertEqual(get_res.status_code, 200)
         self.assertIn('The Da Vinci Code', str(get_res.data))
 
-
     def test_can_edit_book(self):
-        # TODO make sure edit this test per expectations
         """Test if API can edit an existing book"""
         access_token = self.get_access_token(self.user_data)
-        post_res = self.client.post('/api/books/', data=json.dumps(self.book), headers={
+        post_res = self.client.post('/api/books', data=json.dumps(self.book), headers={
             'content-type': 'application/json',
             'Authorization': 'Bearer {}'.format(access_token)
         })
@@ -118,13 +116,12 @@ class BookListApiTestcase(unittest.TestCase):
             'content-type': 'application/json',
             'Authorization': 'Bearer {}'.format(access_token)
         })
-        print str(results.data)
         self.assertIn('Inferno', str(results.data))
 
     def test_book_deletion(self):
         """Test if API can delete an existing book.(DELETE request)"""
         access_token = self.get_access_token(self.user_data)
-        post_res = self.client.post('/api/books/', data=json.dumps(self.book), headers={
+        post_res = self.client.post('/api/books', data=json.dumps(self.book), headers={
             'content-type': 'application/json',
             'Authorization': 'Bearer {}'.format(access_token)
         })

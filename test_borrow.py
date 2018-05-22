@@ -38,15 +38,15 @@ class BorrowTestCase(unittest.TestCase):
 
     def get_access_token(self, user):
         """registers and generates an access token for the user"""
-        self.client.post("/api/auth/register/", data=user)
-        response_login = self.client.post("/api/auth/login/", data=user)
+        self.client.post("/api/auth/register", data=user)
+        response_login = self.client.post("/api/auth/login", data=user)
         result = json.loads(response_login.data)
         return result["access_token"]
 
     def test_book_borrowing(self):
         """Testing if authenticated user can borrow a book"""
         access_token = self.get_access_token(self.user_data)
-        new_book = self.client.post("/api/books/",
+        new_book = self.client.post("/api/books",
                                     data=json.dumps(self.book),
                                     headers={
                                         'content-type': 'application/json',

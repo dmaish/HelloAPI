@@ -28,14 +28,14 @@ class AuthenticateTestcase(unittest.TestCase):
 
     def get_access_token(self):
         """method to login and return the access token"""
-        response = self.client.post("/api/auth/login/", data=self.login_credentials)
+        response = self.client.post("/api/auth/login", data=self.login_credentials)
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.data.decode())
         return result["access_token"]
 
     def test_registration(self):
         """Testing if user can register"""
-        response = self.client.post("/api/auth/register/", data=self.test_user)
+        response = self.client.post("/api/auth/register", data=self.test_user)
         # getting the results returned in json format
         result = json.loads(response.data.decode())
         # assert that the request contains a success message and a 201 status code
@@ -44,18 +44,18 @@ class AuthenticateTestcase(unittest.TestCase):
 
     def test_already_registered_user(self):
         """Test that a user can't register twice"""
-        response = self.client.post("/api/auth/register/", data=self.test_user)
+        response = self.client.post("/api/auth/register", data=self.test_user)
         self.assertEqual(response.status_code, 201)
-        second_response = self.client.post("/api/auth/register/", data=self.test_user)
+        second_response = self.client.post("/api/auth/register", data=self.test_user)
         self.assertEqual(second_response.status_code, 202)
         result = json.loads(second_response.data.decode())
         self.assertEqual(result["message"], "User already exists.Please login")
 
     def test_user_login(self):
         """Test if registered user can be logged in """
-        register_response = self.client.post("/api/auth/register/", data=self.test_user)
+        register_response = self.client.post("/api/auth/register", data=self.test_user)
         self.assertEqual(register_response.status_code, 201)
-        login_response = self.client.post("/api/auth/login/", data=self.test_user)
+        login_response = self.client.post("/api/auth/login", data=self.test_user)
 
         # get results after login attempt in json format
         result = json.loads(login_response.data.decode())
@@ -71,7 +71,7 @@ class AuthenticateTestcase(unittest.TestCase):
             "email": "not_a_user@example.com",
             "password": "nope"
         }
-        response_login = self.client.post("/api/auth/login/", data=not_a_user)
+        response_login = self.client.post("/api/auth/login", data=not_a_user)
         result = json.loads(response_login.data.decode())
         self.assertEqual(response_login.status_code, 401)
         self.assertEqual(result["message"], "Invalid email or password, Please try again")
