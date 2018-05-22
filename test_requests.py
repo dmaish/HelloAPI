@@ -6,7 +6,6 @@ import json
 from app import create_app, db
 from app.models import User
 
-
 class BookListApiTestcase(unittest.TestCase):
     """class representing the test case"""
 

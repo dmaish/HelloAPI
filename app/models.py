@@ -2,8 +2,8 @@ from datetime import datetime
 from werkzeug.exceptions import abort
 from werkzeug.security import generate_password_hash, check_password_hash
 
+# local imports
 from app import db
-
 
 class User(db.Model):
     """model class for creating a users table"""
@@ -69,4 +69,5 @@ class Borrow_Record(db.Model):
 
     def __repr__(self):
         return '<Borrow_Record:{}>'.format(self.book_borrowed, self.user_borrowed)
+
 
