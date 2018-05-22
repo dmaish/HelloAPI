@@ -33,7 +33,10 @@ def list_books_new_book():
         db.session.commit()
 
         added_book = Book.query.filter_by(title=title).first()
-        response = jsonify({"title": added_book.title})
+        response = jsonify({"title": added_book.title,
+                            "author": added_book.author,
+                            "category": added_book.category,
+                            "url": added_book.url})
         response.status_code = 201
         return response
 
