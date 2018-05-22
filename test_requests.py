@@ -7,6 +7,7 @@ from app import create_app, db
 from app.models import User
 
 
+
 class BookListApiTestcase(unittest.TestCase):
     """class representing the test case"""
 
@@ -51,6 +52,7 @@ class BookListApiTestcase(unittest.TestCase):
             # drop all tables
             db.session.remove()
             db.drop_all()
+
 
     def get_access_token(self, user):
         """registers and generates an access token for the user"""
@@ -119,7 +121,7 @@ class BookListApiTestcase(unittest.TestCase):
         })
         print str(results.data)
         self.assertIn('Inferno', str(results.data))
-
+       
     def test_book_deletion(self):
         """Test if API can delete an existing book.(DELETE request)"""
         access_token = self.get_access_token(self.user_data)

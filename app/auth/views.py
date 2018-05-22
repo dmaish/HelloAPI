@@ -32,6 +32,7 @@ def user_register():
             db.session.add(user)
             db.session.commit()
 
+
             response = {
                 "message": "you registered successfully"
             }
