@@ -18,3 +18,4 @@ pycparser==2.18
 PyJWT==1.4.2
 six==1.11.0
 Werkzeug==0.14.1
+Flask-SQLAlchemy==2.3.2
