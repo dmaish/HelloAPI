@@ -1,19 +1,25 @@
-from . import auth
 from flask import request, jsonify
-from app.models import User, Blacklist
 from flask_jwt_extended import (create_access_token,
                                 get_jwt_identity,
                                 jwt_required,
                                 get_raw_jwt)
 
+# local imports
+import logging
+from . import auth
+from app.models import *
+from app import db
+
 
 @auth.route("/api/auth/register", methods=['POST'])
 def user_register():
-    # TODO in the event of a database switch the following request with the database query
+    """method to register new user"""
     username = request.data["username"]
     email = request.data["email"]
     password = request.data["password"]
+
     # checking if user already exists
+<<<<<<< HEAD
     user = User.get_by_email(email)
     if not user:
             new_user = User()
@@ -21,17 +27,26 @@ def user_register():
             new_user.email = email
             new_user.password_set(password)
             new_user.save_user()
-
-            response = {
-                "message": "You registered successfully"
-            }
-
-            return jsonify(response), 201
-
-    else:
+=======
+    if User.get_user_by_email(email):
         response = {"message": "User already exists.Please login"}
 
         return jsonify(response), 202
+    else:
+            user = User(username=username,
+                        email=email,
+                        password=password)
+
+            # add new user to database
+            db.session.add(user)
+            db.session.commit()
+>>>>>>> 61888e6416ce10d27f9a136f8d12c5af375b6a41
+
+            response = {
+                "message": "you registered successfully"
+            }
+
+            return jsonify(response), 201
 
 
 @auth.route("/api/auth/login", methods=["POST"])
@@ -39,10 +54,10 @@ def user_login():
     """method to handle login of registered users"""
     email = request.data["email"]
     password = request.data["password"]
-    user = User.get_by_email(email)
 
     # get the user if they exist and if they gave valid password...
-    if user and user.check_password(password):
+    registered_user = User.get_user_by_email(email)
+    if registered_user is not None and registered_user.check_password(password):
             # generate the access token
             access_token = create_access_token(identity=email)
             if access_token:
@@ -64,10 +79,15 @@ def user_login():
 @auth.route("/api/auth/reset-password", methods=["POST"])
 @jwt_required
 def password_reset():
-    email = get_jwt_identity()
-    user = User.get_by_email(email)
+    """method to reset password of logged in user"""
     new_password = request.data["password"]
-    user.password_set(new_password)
+
+    email = get_jwt_identity()
+    user = User.get_user_by_email(email)
+
+    logging.debug("user email", email)
+    user.password = new_password
+    db.session.commit()
 
     response = jsonify({"message": "password reset successful"})
 
@@ -77,38 +97,7 @@ def password_reset():
 @auth.route("/api/auth/logout", methods=["DELETE"])
 @jwt_required
 def logout():
-    """endpoint for revoking the current users json web token"""
+    """method for revoking the current user's json web token"""
     jti = get_raw_jwt()['jti']
-    Blacklist().blacklist.append(jti)
+    # Blacklist().blacklist.append(jti)
     return jsonify({"message": "Successfully logged out"})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

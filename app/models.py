@@ -1,133 +1,72 @@
-from time import strftime, gmtime
-
-import jwt
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask import abort, current_app
 from datetime import datetime
+from werkzeug.exceptions import abort
+from werkzeug.security import generate_password_hash, check_password_hash
 
-all_users = []           # list containing all users in the library
-borrowed_books = []      # list containing id of books borrowed and username who borrowed
-all_books = []           # all books in the library
+from app import db
 
 
-class BooksModel:
-    def __init__(self):
-        self.id = None
-        self.title = None
-        self.author = None
-        self.category = None
-        self.url = None
+class User(db.Model):
+    """model class for creating a users table"""
+    __tablename__ = 'users'
 
-    def book_add(self):
-        """ method to add book dictionaries to the books list"""
-        all_books.append(self)
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(60), index=True, unique=True)
+    email = db.Column(db.String(60), index=True, unique=True)
+    password_hash = db.Column(db.String(128))
+    is_admin = db.Column(db.Boolean, default=False)
+    borrow_records = db.relationship('Borrow_Record', backref='user', lazy='dynamic')
 
-    @staticmethod
-    def book_all():
-        """method returns all books in json form"""
-        books = []
-        for each_book in all_books:
-            book = {
-                "id": each_book.id,
-                "title": each_book.title,
-                "author": each_book.author,
-                "category": each_book.category,
-                "url": each_book.url
-            }
-            books.append(book)
-        return books
+    @property
+    def password(self):
+        """property decorator replaces getters\setters"""
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self, password):
+        """set password to a hashed password"""
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, input_password):
+        """method to check if user password matches hashed password"""
+        return check_password_hash(self.password_hash, input_password)
 
     @staticmethod
-    def book_specific(id):
-        """method returns specific book according to book id"""
-        for book in all_books:
-            if book.id == id:
-                return book
+    def get_user_by_email(email):
+        """method to get a user through email if user is registered"""
+        user = User.query.filter_by(email=email).first()
+        return user
 
-    # FINISH UP THIS CODE THAT REPLACES THE UPDATED BOOK WITH THE OLD BOOK IN THE all_books LIST
-    @staticmethod
-    def update(id, book_update):
-        """method returns specific book according to book id"""
-        edited_book = None
-        for i, book in enumerate(all_books):
-            if book.id == id:
-                all_books[i] = book_update
-                edited_book = all_books[i]
-
-        return edited_book
-
-    @staticmethod
-    def book_delete(id):
-        """method deletes specific book according to book id"""
-        for i, book in enumerate(all_books):
-            if book.id == id:
-                del all_books[i]
+    def __repr__(self):
+        return '<User:{}>'.format(self.username)
 
 
-class User:
-    """This class defines the users model"""
-    def __init__(self):
-        self.username = None
-        self.email = None
-        self.password = None
-        self.is_admin = False
-        self.books_by_particular_user = []
+class Book(db.Model):
+    """model class for creating books table"""
+    __tablename__ = 'books'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(60), index=True, unique=True)
+    category = db.Column(db.String(60), index=True)
+    author = db.Column(db.String(60), index=True)
+    url = db.Column(db.String(100))
+    borrowed_flag = db.Column(db.Boolean, default=False)
+    users = db.relationship('Borrow_Record', backref='book', lazy='dynamic')
 
-    def password_set(self, password):
-        self.password = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
-
-    def save_user(self):
-        all_users.append(self)
-
-    def user_book_borrow(self, id):
-        book = BooksModel.book_specific()
-        self.books_by_particular_user.append(book)
-        # appending to the borrowed books record
-        borrow_time = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-        borrowing_record = BorrowingRecord(book, book["title"],
-                                           borrow_time, self)
-
-    @staticmethod
-    def get_by_email(email):
-        for user in all_users:
-            if user.email == email:
-                return user
+    def __repr__(self):
+        return '<Book:{}>'.format(self.title)
 
 
-class BorrowingRecord:
-    def __init__(self, title, borrow_time, user):
-        self.title = title
-        self.borrow_time = borrow_time,
-        self.user = user
+class Borrow_Record(db.Model):
+    """model class for creating borrow_records table"""
+    __tablename__ = 'borrow_records'
+    id = db.Column(db.Integer, primary_key=True)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'),
+                        nullable=False)
+    user_borrowed = db.Column(db.Integer, db.ForeignKey('users.id'),
+                              nullable=False)
+    time_borrowed = db.Column(db.String(60))
+    time_returned = db.Column(db.String(60))
+    return_flag = db.Column(db.Boolean, default=False)
 
-    def save_record(self):
-        self.save_record(self)
-
-
-class Blacklist:
-    """this class stores revoked json web tokens"""
-    def __init__(self):
-        self.blacklist = []
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def __repr__(self):
+        return '<Borrow_Record:{}>'.format(self.book_borrowed, self.user_borrowed)
 
