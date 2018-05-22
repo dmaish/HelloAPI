@@ -19,15 +19,7 @@ def user_register():
     password = request.data["password"]
 
     # checking if user already exists
-<<<<<<< HEAD
-    user = User.get_by_email(email)
-    if not user:
-            new_user = User()
-            new_user.username = username
-            new_user.email = email
-            new_user.password_set(password)
-            new_user.save_user()
-=======
+
     if User.get_user_by_email(email):
         response = {"message": "User already exists.Please login"}
 
@@ -40,7 +32,6 @@ def user_register():
             # add new user to database
             db.session.add(user)
             db.session.commit()
->>>>>>> 61888e6416ce10d27f9a136f8d12c5af375b6a41
 
             response = {
                 "message": "you registered successfully"
