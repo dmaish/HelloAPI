@@ -17,7 +17,7 @@ def create_app(config_name):
     app.config.from_pyfile('config.py')
     db.init_app(app)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    jwt = JWTManager(app)
+    JWTManager(app)
 
     # importing the authentication, admin and user blueprints and register them on the app
     from .auth import auth

@@ -1,3 +1,5 @@
+import re
+
 from flask import request, jsonify
 from flask_jwt_extended import (create_access_token,
                                 get_jwt_identity,
@@ -25,6 +27,7 @@ def user_register():
 
         return jsonify(response), 202
     else:
+        if re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
             user = User(username=username,
                         email=email,
                         password=password)
@@ -33,12 +36,16 @@ def user_register():
             db.session.add(user)
             db.session.commit()
 
-
             response = {
                 "message": "you registered successfully"
             }
 
             return jsonify(response), 201
+        else:
+            response = {
+                "message": "enter a valid email"
+            }
+            return jsonify(response), 400
 
 
 @auth.route("/api/auth/login", methods=["POST"])
