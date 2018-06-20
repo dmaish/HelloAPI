@@ -1,3 +1,5 @@
+import re
+
 from flask import request, jsonify
 from flask_jwt_extended import (create_access_token,
                                 get_jwt_identity,
@@ -5,10 +7,9 @@ from flask_jwt_extended import (create_access_token,
                                 get_raw_jwt)
 
 # local imports
-import logging
 from . import auth
 from app.models import *
-from app import db
+from app import db, jwt
 
 
 @auth.route("/api/auth/register", methods=['POST'])
@@ -25,6 +26,7 @@ def user_register():
 
         return jsonify(response), 202
     else:
+        if re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
             user = User(username=username,
                         email=email,
                         password=password)
@@ -33,12 +35,16 @@ def user_register():
             db.session.add(user)
             db.session.commit()
 
-
             response = {
                 "message": "you registered successfully"
             }
 
             return jsonify(response), 201
+        else:
+            response = {
+                "message": "please enter a valid email address"
+            }
+            return jsonify(response)
 
 
 @auth.route("/api/auth/login", methods=["POST"])
@@ -77,7 +83,6 @@ def password_reset():
     email = get_jwt_identity()
     user = User.get_user_by_email(email)
 
-    logging.debug("user email", email)
     user.password = new_password
     db.session.commit()
 
@@ -91,5 +96,19 @@ def password_reset():
 def logout():
     """method for revoking the current user's json web token"""
     jti = get_raw_jwt()['jti']
-    # Blacklist().blacklist.append(jti)
-    return jsonify({"message": "Successfully logged out"})
+    revoked_token = Revoked_Tokens(token=jti)
+    db.session.add(revoked_token)
+    db.session.commit()
+    response = jsonify({"message": "you have successfully logged out"})
+    return response, 200
+
+
+@jwt.token_in_blacklist_loader
+def check_if_token_in_blacklist_loader(dycrypted_token):
+    """jwt decorator that checks if token is revoked"""
+    jti = dycrypted_token['jti']
+    if Revoked_Tokens.query.filter_by(token=jti):
+        return True
+
+
+
