@@ -1,82 +1,154 @@
 FORMAT: 1A
 HOST: http://polls.apiblueprint.org/
 
-# hello_api
+# HelloAPI
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+HelloAPI is a simple API that allows consumers to view, borrow and return books.
 
-## API endpoints that take in requests and give responses  [/routes]
+## endpoints [/endpoints]
 
+### Registration [POST]
 
-###  [/api/auth/register]
++ Request (form-data)
 
-
-+ Request (application/json)
-
-        {"username": "daniel",
-        "email": "mainadaniel81@gmail.com",
-        "password": "bluestrokes"
+        {
+        "username": "john doe",
+        "email": "johndoeemail@gmail.com",
+        "password": "very-very-secret"
         }
-
+        
 + Response 201 (application/json)
 
+        {
+        "message": "you have successfully registered"
+        }
+        
+### Login [POST]
 
++ Request (form-data)
+
+        {
+        "email": "johndoeemail@gmail.com",
+        "password": "very-very-secret"
+        }
+        
++ Response 201 (application/json)
+
+        {
+        "message": "you have successfully logged in"
+        }
+
+### get all books [GET]
+
++ Response 200 (application/json)
+
+        [
             {
-               "message": "You registered successfully" 
+                "question": "Favourite programming language?",
+                "published_at": "2015-08-05T08:40:51.620Z",
+                "choices": [
+                    {
+                        "choice": "Swift",
+                        "votes": 2048
+                    }, {
+                        "choice": "Python",
+                        "votes": 1024
+                    }, {
+                        "choice": "Objective-C",
+                        "votes": 512
+                    }, {
+                        "choice": "Ruby",
+                        "votes": 256
+                    }
+                ]
             }
+        ]
 
-###  [/api/auth/login]
+### Create a New Book [POST]
 
+The admin uses this endpoint to add new books to the library.
 
 + Request (application/json)
 
         {
-            "email": "mainadaniel81@gmail.com",
-            "password": "bluestrokes"
+            "title": "the lost sheep",
+            "author": "Jason Pontius",
+            "category": "children book",
+            "url": "https:///unsplash/pontius"
         }
 
 + Response 201 (application/json)
 
+    + Headers
+
+
+                'content-type': 'application/json',
+                'Authorization': 'Bearer {}'.format(access_token)
+
+    + Body
 
             {
-               "message": "You logged in successfully",
-                "access_token": access_token  
+            "title": "the lost sheep",
+            "author": "Jason Pontius",
+            "category": "children book",
+            "url": "https:///unsplash/pontius"
             }
-
-###  [/api/books/]
-
-#### methods = ["GET", "POST"]
-
-##### If method == ["GET"]
-The endpoint will return all books in the library
-
-+ Response 200 (application/json)
-
-         
-          {
-            "id": 1,
-            "title": "valley of horses",
-            "author": "dan brown",
-            "category": "adventure",
-            "url": "https//"
-          }
-          {
-            "id": 1,
-            "title": "valley of horses",
-            "author": "dan brown",
-            "category": "adventure",
-            "url": "https//"
-          }
-         
-##### If method == ["POST"] 
-The api endpoint will add a new book in the library
-
-    + Request
             
+### Edit a Book [PUT]
+
+The admin uses this endpoint to edit a book in the library.
+
++ Request (application/json)
+
+        {
+            "title": "the lost sheep and the silly goat",
+            "author": "Jason Pontius pilate",
+            "category": "children book",
+            "url": "https:///unsplash/pontius"
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+    
+        
+            'content-type': 'application/json',
+            'Authorization': 'Bearer {}'.format(access_token)
+
+
+    + Body
+
             {
-                "id": 1,
-                "title": "valley of horses",
-                "author": "dan brown",
-                "category": "adventure",
-                "url": "https//"
-              }
+            "title": "the lost sheep and the silly goat",
+            "author": "Jason Pontius pilate",
+            "category": "children book",
+            "url": "https:///unsplash/pontius"
+            }
+            
+### Delete a Book [DELETE]
+
+The admin uses this endpoint to remove a book from the library.
+
++ Request (application/json)
+
+        {
+            "title": "the lost sheep and the silly goat",
+            "author": "Jason Pontius pilate",
+            "category": "children book",
+            "url": "https:///unsplash/pontius"
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+    
+        
+            'content-type': 'application/json',
+            'Authorization': 'Bearer {}'.format(access_token)
+
+
+    + Body
+
+            {
+             "message": "book successfully deleted"
+            }
