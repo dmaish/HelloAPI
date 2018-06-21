@@ -45,7 +45,9 @@ def list_books_new_book():
 
         books = []
 
-        all_books = Book.query.all()
+        all_books = Book.query.paginate(per_page=2).items
+        all_pages = all_books.pages
+        current_page = all_books.page
 
         for each_book in all_books:
             book = {"id": each_book.id,
