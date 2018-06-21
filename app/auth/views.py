@@ -42,15 +42,9 @@ def user_register():
             return jsonify(response), 201
         else:
             response = {
-<<<<<<< HEAD
                 "message": "please enter a valid email address"
             }
             return jsonify(response)
-=======
-                "message": "enter a valid email"
-            }
-            return jsonify(response), 400
->>>>>>> 718e5f22291d4d1d0123fd5636d809e0907113a2
 
 
 @auth.route("/api/auth/login", methods=["POST"])
