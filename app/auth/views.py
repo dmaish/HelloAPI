@@ -11,6 +11,14 @@ from . import auth
 from app.models import *
 from app import db, jwt
 
+@auth.route("/", methods=['GET'])
+def home():
+    """Home page"""
+    return jsonify(
+        {
+            "message": "This homepage"
+        }
+    )
 
 @auth.route("/api/auth/register", methods=['POST'])
 def user_register():
