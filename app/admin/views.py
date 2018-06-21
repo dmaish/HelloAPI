@@ -1,5 +1,5 @@
 # global imports
-from flask import request, jsonify
+from flask import request, jsonify, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models import *
 
@@ -16,9 +16,10 @@ def check_if_user_is_admin():
         abort(403)
 
 
-@admin.route('/api/books', methods=['GET', 'POST'])
+@admin.route('/api/books', methods=['POST'])
 @jwt_required
-def list_books_new_book():
+def add_book():
+    """method to allow admin to add a new book in the library"""
 
     if request.method == 'POST':
         # checking if logged in user is admin
@@ -38,25 +39,6 @@ def list_books_new_book():
                             "category": added_book.category,
                             "url": added_book.url})
         response.status_code = 201
-        return response
-
-    # listing all available books in the library
-    elif request.method == 'GET':
-
-        books = []
-
-        all_books = Book.query.all()
-
-        for each_book in all_books:
-            book = {"id": each_book.id,
-                    "title": each_book.title,
-                    "author": each_book.author,
-                    "category": each_book.category,
-                    "url": each_book.url}
-            books.append(book)
-
-        response = jsonify({"books": books})
-        response.status_code = 200
         return response
 
 

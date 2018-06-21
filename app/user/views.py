@@ -1,10 +1,32 @@
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from flask import jsonify
+from flask import jsonify, request
 
 # local imports
 from . import user
 from ..models import *
 import datetime
+
+
+@user.route('/api/books', methods=["GET"])
+def list_books():
+    """method that allows users to list all books in the library"""
+    books = []
+
+    per_page = request.args.get('per_page', 20, type=int)
+    page = request.args.get('page', 1, type=int)
+    all_books = Book.query.paginate(per_page=per_page, page=page).items
+
+    for each_book in all_books:
+        book = {"id": each_book.id,
+                "title": each_book.title,
+                "author": each_book.author,
+                "category": each_book.category,
+                "url": each_book.url}
+        books.append(book)
+
+    response = jsonify({"books": books})
+    response.status_code = 200
+    return response
 
 
 @user.route("/api/users/books/<int:id>", methods=["POST"])
@@ -61,33 +83,7 @@ def return_book(id):
     db.session.commit()
     response = {
         "message": "book successfully returned",
-        "time returned":borrowing_record.time_returned
-    }
-    return jsonify(response), 200
-
-
-@user.route("/api/users/books?returned=false", methods=["GET"])
-@jwt_required
-def get_books_not_returned_by_user():
-    """method to get unreturned books by logged in user"""
-    books = []
-    user_email = get_jwt_identity()
-    current_user = User.get_user_by_email(user_email)
-    unreturned_records = Borrow_Record.query.filter_by(user_borrowed=current_user.id,
-                                                       return_flag=False).all()
-
-    for each_record in unreturned_records:
-        book = Book.query.filter_by(id=each_record.book_id).first()
-        record = {"id": book.id,
-                  "title": book.title,
-                  "author": book.author,
-                  "category": book.category,
-                  "url": book.url}
-
-        books.append(record)
-
-    response = {
-        "unreturned books": books
+        "time returned": borrowing_record.time_returned
     }
     return jsonify(response), 200
 
@@ -96,6 +92,28 @@ def get_books_not_returned_by_user():
 @jwt_required
 def get_user_borrowing_history():
     """method to get the logged in user borrowing history"""
+    if request.args.get('returned') is False:
+        books = []
+        user_email = get_jwt_identity()
+        current_user = User.get_user_by_email(user_email)
+        unreturned_records = Borrow_Record.query.filter_by(user_borrowed=current_user.id,
+                                                           return_flag=False).all()
+
+        for each_record in unreturned_records:
+            book = Book.query.filter_by(id=each_record.book_id).first()
+            record = {"id": book.id,
+                      "title": book.title,
+                      "author": book.author,
+                      "category": book.category,
+                      "url": book.url}
+
+            books.append(record)
+
+        response = {
+            "unreturned books": books
+        }
+        return jsonify(response), 200
+
     history = []
     user_email = get_jwt_identity()
     current_user = User.get_user_by_email(user_email)

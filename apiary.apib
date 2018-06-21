@@ -1,0 +1,82 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# hello_api
+
+Polls is a simple API allowing consumers to view polls and vote in them.
+
+## API endpoints that take in requests and give responses  [/routes]
+
+
+###  [/api/auth/register]
+
+
++ Request (application/json)
+
+        {"username": "daniel",
+        "email": "mainadaniel81@gmail.com",
+        "password": "bluestrokes"
+        }
+
++ Response 201 (application/json)
+
+
+            {
+               "message": "You registered successfully" 
+            }
+
+###  [/api/auth/login]
+
+
++ Request (application/json)
+
+        {
+            "email": "mainadaniel81@gmail.com",
+            "password": "bluestrokes"
+        }
+
++ Response 201 (application/json)
+
+
+            {
+               "message": "You logged in successfully",
+                "access_token": access_token  
+            }
+
+###  [/api/books/]
+
+#### methods = ["GET", "POST"]
+
+##### If method == ["GET"]
+The endpoint will return all books in the library
+
++ Response 200 (application/json)
+
+         
+          {
+            "id": 1,
+            "title": "valley of horses",
+            "author": "dan brown",
+            "category": "adventure",
+            "url": "https//"
+          }
+          {
+            "id": 1,
+            "title": "valley of horses",
+            "author": "dan brown",
+            "category": "adventure",
+            "url": "https//"
+          }
+         
+##### If method == ["POST"] 
+The api endpoint will add a new book in the library
+
+    + Request
+            
+            {
+                "id": 1,
+                "title": "valley of horses",
+                "author": "dan brown",
+                "category": "adventure",
+                "url": "https//"
+              }
