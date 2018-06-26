@@ -27,19 +27,23 @@ def add_book():
 
         json_res = request.get_json(force=True)
         title = json_res["title"]
-        book = Book(title=title, author=json_res["author"],
-                    category=request.json["category"], url=request.json["url"])
 
-        db.session.add(book)
-        db.session.commit()
+        # check if book already exists
+        if Book.query.filter_by(title=title).first():
+            return jsonify("message: book already exists in the database")
+        else:
+            book = Book(title=title, author=json_res["author"],
+                        category=request.json["category"], url=request.json["url"])
 
-        added_book = Book.query.filter_by(title=title).first()
-        response = jsonify({"title": added_book.title,
-                            "author": added_book.author,
-                            "category": added_book.category,
-                            "url": added_book.url})
-        response.status_code = 201
-        return response
+            db.session.add(book)
+            db.session.commit()
+
+            added_book = Book.query.filter_by(title=title).first()
+            response = jsonify({
+                                "message": "success! '{}' added to the library".format(added_book.title)
+                                    })
+            response.status_code = 201
+            return response
 
 
 # getting a specific book using the id as primary key
@@ -90,7 +94,16 @@ def get_edit_remove_book(id):
     elif request.method == 'DELETE':
         # checking if logged in user is admin
         check_if_user_is_admin()
+        
+        # check if book is available
+        if Book.query.filter_by(id=id).first():
+            # check if book is already borrowed before deleting
+            if Borrow_Record.query.filter_by(book_id=id, return_flag=False).first():
+                return jsonify("message: you cannot delete book already borrowed")
 
-        db.session.delete(book)
-        db.session.commit()
-        return "message: {} deleted successfully".format(id), 404
+            else:
+                db.session.delete(book)
+                db.session.commit()
+                return jsonify("message: {} deleted successfully".format(id)), 404
+        else:
+            return jsonify("message: book not available in the library")

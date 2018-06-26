@@ -75,23 +75,3 @@ class Revoked_Tokens(db.Model):
     """model class for creating table for revoked tokens"""
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

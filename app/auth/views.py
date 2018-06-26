@@ -11,14 +11,16 @@ from . import auth
 from app.models import *
 from app import db, jwt
 
+
 @auth.route("/", methods=['GET'])
 def home():
     """Home page"""
     return jsonify(
         {
-            "message": "This homepage"
+            "message": "Welcome to Hello Books"
         }
     )
+
 
 @auth.route("/api/auth/register", methods=['POST'])
 def user_register():
@@ -117,6 +119,3 @@ def check_if_token_in_blacklist_loader(dycrypted_token):
     jti = dycrypted_token['jti']
     if Revoked_Tokens.query.filter_by(token=jti):
         return True
-
-
-

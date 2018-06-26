@@ -50,8 +50,8 @@ def borrow_book(id):
         db.session.commit()
 
         response = {
-            "user borrowed": record.user_borrowed,
-            "book borrowed": record.book_id,
+            "user borrowed": (User.query.filter_by(id=record.user_borrowed).first()).username,
+            "book borrowed": (Book.query.filter_by(id=record.book_id).first()).title,
             "time borrowed": record.time_borrowed,
             "message": "book borrowing success"
         }
@@ -74,12 +74,12 @@ def return_book(id):
     user_email = get_jwt_identity()
     user = User.get_user_by_email(user_email)
     book = Book.query.filter_by(id=id).first()
-    borrowing_record = Borrow_Record.query.filter_by(book_id=id,
-                                                     user_borrowed=user.id,
-                                                     return_flag=False).first()
+    borrowing_record = Borrow_Record.query.filter_by(book_id=id, user_borrowed=user.id, return_flag=False).first()
+
     borrowing_record.return_flag = True
     borrowing_record.time_returned = time
     book.borrowed_flag = False
+    db.session.add(borrowing_record)
     db.session.commit()
     response = {
         "message": "book successfully returned",
@@ -92,7 +92,9 @@ def return_book(id):
 @jwt_required
 def get_user_borrowing_history():
     """method to get the logged in user borrowing history"""
-    if request.args.get('returned') is False:
+    returned = request.args.get('returned', True)
+
+    if returned == 'false':
         books = []
         user_email = get_jwt_identity()
         current_user = User.get_user_by_email(user_email)
@@ -105,7 +107,8 @@ def get_user_borrowing_history():
                       "title": book.title,
                       "author": book.author,
                       "category": book.category,
-                      "url": book.url}
+                      "url": book.url,
+                      "return_flag": each_record.return_flag}
 
             books.append(record)
 
@@ -113,27 +116,29 @@ def get_user_borrowing_history():
             "unreturned books": books
         }
         return jsonify(response), 200
+    else:
+        history = []
+        user_email = get_jwt_identity()
+        current_user = User.get_user_by_email(user_email)
+        records = Borrow_Record.query.filter_by(user_borrowed=current_user.id).all()
 
-    history = []
-    user_email = get_jwt_identity()
-    current_user = User.get_user_by_email(user_email)
-    records = Borrow_Record.query.filter_by(user_borrowed=current_user.id).all()
+        for each_record in records:
+            book = Book.query.filter_by(id=each_record.book_id).first()
+            record = {
+                      "book id": book.id,
+                      "title": book.title,
+                      "author": book.author,
+                      "category": book.category,
+                      "time borrowed": each_record.time_borrowed,
+                      "time returned": each_record.time_returned,
+                      "return_flag": each_record.return_flag}
 
-    for each_record in records:
-        book = Book.query.filter_by(id=each_record.book_id).first()
-        record = {"title": book.title,
-                  "author": book.author,
-                  "category": book.category,
-                  "time borrowed": each_record.time_borrowed,
-                  "time returned": each_record.time_returned,
-                  "return_flag": each_record.return_flag}
+            history.append(record)
 
-        history.append(record)
-
-    response = {
-        "borrowing history": history
-    }
-    return jsonify(response), 200
+        response = {
+            "borrowing history": history
+        }
+        return jsonify(response), 200
 
 
 
