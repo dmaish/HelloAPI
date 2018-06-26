@@ -84,7 +84,8 @@ def get_edit_remove_book(id):
         db.session.add(book)
         db.session.commit()
 
-        response = jsonify({"title": book.title,
+        response = jsonify({"message": "book edit successful",
+                            "title": book.title,
                             "author": book.author,
                             "category": book.category,
                             "url": book.category})
