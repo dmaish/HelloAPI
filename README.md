@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/dmaish/HelloAPI.svg?branch=tests)](https://travis-ci.org/dmaish/HelloAPI)
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/3e91688355b14079fbc5/maintainability)](https://codeclimate.com/github/dmaish/HelloAPI/maintainability)
+
 ## HelloAPI
 HelloApi is a library book borrowing and restocking api.It helps an admin user add, edit or delete a book.Helps a user checkout their profile and borrow books
 
