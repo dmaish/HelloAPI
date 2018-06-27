@@ -69,7 +69,7 @@ class AuthenticateTestcase(unittest.TestCase):
         # defining a dictionary to represent an unregistered user
         not_a_user = {
             "email": "not_a_user@example.com",
-            "password": "nope"
+            "password": "aintleggit"
         }
         response_login = self.client.post("/api/auth/login", data=not_a_user)
         result = json.loads(response_login.data.decode())

@@ -3,8 +3,8 @@ import unittest
 import json
 
 # local imports
-from app import create_app, db
 from app.models import User
+from app import create_app, db
 
 
 class BookListApiTestcase(unittest.TestCase):
