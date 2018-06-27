@@ -1,5 +1,6 @@
 
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import jsonify
 
 # local imports
 from app import db
@@ -35,6 +36,18 @@ class User(db.Model):
         """method to get a user through email if user is registered"""
         user = User.query.filter_by(email=email).first()
         return user
+
+    @staticmethod
+    def validation(password, username):
+        """method to handle validation of username and password in registration"""
+        if password == "" or password == " ":
+            return jsonify("message: make sure to type in your password")
+        elif password.len() < 8:
+            return jsonify("message: password must have 8 or more characters")
+        elif username.isspace():
+            return jsonify("message: make sure to type in your username")
+        elif username.len() < 5:
+            return jsonify("message: username must have 5 or more characters")
 
     def __repr__(self):
         return '<User:{}>'.format(self.username)
