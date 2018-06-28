@@ -5,6 +5,9 @@
 ## HelloAPI
 HelloApi is a library book borrowing and restocking api.It helps an admin user add, edit or delete a book.Helps a user checkout their profile and borrow books
 
+## API documentation
+https://hellobooks6.docs.apiary.io/#reference
+
 ## Endpoint functionality
 
 | Endpoints           | Functionality     | method |
@@ -15,3 +18,12 @@ HelloApi is a library book borrowing and restocking api.It helps an admin user a
 | /api/auth/register  | user registration | POST   |
 | /api/auth/login     | user login        | POST   |
 | /api/users/id       | borrow a book     | POST   |
+
+## Installing and running the application
+1. clone the repo at : https://github.com/dmaish/HelloAPI/tree/develop
+2. Install virtualenv : pip install virtualenv
+3. CD into the application folder
+3. Make a virtual environment : virtualenv you-env
+4. Activate the virtual environment
+5. Install the requirements: pip install -r requirements.txt
+6. Run the application: flask run
