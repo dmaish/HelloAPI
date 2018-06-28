@@ -36,10 +36,10 @@ https://hellobooks6.docs.apiary.io/#reference
 https://dmaish.github.io/HelloBooks/index.html
 
 ## Made with
-1.Flask
-2.Postgresql
-3.Heroku
+1. Flask
+2. Postgresql
+3. Heroku
 
 ## contributors
-Daniel Maina
-Andela Kenya
+1. Daniel Maina
+2. Andela Kenya
