@@ -20,8 +20,6 @@ https://hellobooks6.docs.apiary.io/#reference
 | /api/users/id                    | borrow a book                    | POST   |
 |/api/users/books                  |Get User borrowing history        |GET
 |/api/users/books?returned=false   |Get books not yet been returned   |GET 
-|/api/auth/register                |Creates a user account            |POST
-|/api/auth/login                   |Logs in a user                    |POST
 |/api/auth/logout                  |Logs out a user                   |POST
 |/api/auth/reset-password          |Password reset                    |POST
 
