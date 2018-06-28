@@ -1,4 +1,5 @@
-
+from flask_jwt_extended import get_jwt_identity
+from werkzeug.exceptions import abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import jsonify
 
@@ -38,16 +39,12 @@ class User(db.Model):
         return user
 
     @staticmethod
-    def validation(password, username):
-        """method to handle validation of username and password in registration"""
-        if password == "" or password == " ":
-            return jsonify("message: make sure to type in your password")
-        elif password.len() < 8:
-            return jsonify("message: password must have 8 or more characters")
-        elif username.isspace():
-            return jsonify("message: make sure to type in your username")
-        elif username.len() < 5:
-            return jsonify("message: username must have 5 or more characters")
+    # check if logged in user is admin
+    def check_if_user_is_admin():
+        email = get_jwt_identity()
+        user = User.get_user_by_email(email)
+        if not user.is_admin:
+            abort(403)
 
     def __repr__(self):
         return '<User:{}>'.format(self.username)

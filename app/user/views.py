@@ -98,8 +98,8 @@ def get_user_borrowing_history():
         books = []
         user_email = get_jwt_identity()
         current_user = User.get_user_by_email(user_email)
-        unreturned_records = Borrow_Record.query.filter_by(user_borrowed=current_user.id,
-                                                           return_flag=False).all()
+        # unreturned_records = Borrow_Record.query.filter_by(user_borrowed=current_user.id,
+        #                                                    return_flag=False).all()
 
         for each_record in unreturned_records:
             book = Book.query.filter_by(id=each_record.book_id).first()
@@ -120,7 +120,7 @@ def get_user_borrowing_history():
         history = []
         user_email = get_jwt_identity()
         current_user = User.get_user_by_email(user_email)
-        records = Borrow_Record.query.filter_by(user_borrowed=current_user.id).all()
+        # records = Borrow_Record.query.filter_by(user_borrowed=current_user.id).all()
 
         for each_record in records:
             book = Book.query.filter_by(id=each_record.book_id).first()

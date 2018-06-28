@@ -45,7 +45,7 @@ def user_register():
 
             return jsonify(response), 202
         else:
-            if re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email) and User.validation(password, username):
+            if re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
                 user = User(username=username,
                             email=email,
                             password=password)
@@ -123,8 +123,16 @@ def logout():
 
 
 @jwt.token_in_blacklist_loader
-def check_if_token_in_blacklist_loader(dycrypted_token):
+def check_if_token_in_blacklist_loader():
     """jwt decorator that checks if token is revoked"""
-    jti = dycrypted_token['jti']
-    if Revoked_Tokens.query.filter_by(token=jti):
+    jti = get_raw_jwt()['jti']
+    print jti
+    if Revoked_Tokens.query.filter_by(token=jti).first():
         return True
+    return False
+
+
+@jwt.revoked_token_loader
+def revoked_message():
+    """method to return message if token has been revoked"""
+    return jsonify("message: your token is revoked, login again")
