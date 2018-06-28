@@ -1,7 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/dmaish/HelloAPI/badge.svg?branch=tests)](https://coveralls.io/github/dmaish/HelloAPI?branch=tests)
-
 [![Build Status](https://travis-ci.org/dmaish/HelloAPI.svg?branch=tests)](https://travis-ci.org/dmaish/HelloAPI)
-
 [![Maintainability](https://api.codeclimate.com/v1/badges/3e91688355b14079fbc5/maintainability)](https://codeclimate.com/github/dmaish/HelloAPI/maintainability)
 
 ## HelloAPI
