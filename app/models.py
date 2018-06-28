@@ -43,8 +43,10 @@ class User(db.Model):
     def check_if_user_is_admin():
         email = get_jwt_identity()
         user = User.get_user_by_email(email)
-        if not user.is_admin:
-            abort(403)
+        if user.is_admin:
+            return True
+        else:
+            return False
 
     def __repr__(self):
         return '<User:{}>'.format(self.username)

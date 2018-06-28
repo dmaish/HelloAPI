@@ -16,7 +16,8 @@ def add_book():
 
     if request.method == 'POST':
         # checking if logged in user is admin
-        User.check_if_user_is_admin()
+        if not User.check_if_user_is_admin():
+            abort(403)
 
         json_res = request.get_json(force=True)
         title = json_res["title"]
@@ -59,7 +60,8 @@ def get_edit_remove_book(id):
     elif request.method == 'PUT':
 
         # checking if logged in user is admin
-        User.check_if_user_is_admin()
+        if not User.check_if_user_is_admin():
+            abort(403)
 
         json_res = request.get_json(force=True)
         book_update = {
@@ -87,7 +89,8 @@ def get_edit_remove_book(id):
 
     elif request.method == 'DELETE':
         # checking if logged in user is admin
-        User.check_if_user_is_admin()
+        if not User.check_if_user_is_admin():
+            abort(403)
         
         # check if book is available
         if Book.query.filter_by(id=id).first():

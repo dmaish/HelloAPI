@@ -149,12 +149,3 @@ def get_user_borrowing_history():
             "borrowing history": history
         }
         return jsonify(response), 200
-
-
-
-
-
-
-
-
-
