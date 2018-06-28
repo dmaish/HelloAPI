@@ -1,4 +1,4 @@
-web: gunicorn run:app
+web: gunicorn manage:app
 python manage.py db init
 python manage.py db migrate
 python manage.py db upgrade
