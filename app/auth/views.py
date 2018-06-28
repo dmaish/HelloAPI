@@ -126,7 +126,6 @@ def logout():
 def check_if_token_in_blacklist_loader():
     """jwt decorator that checks if token is revoked"""
     jti = get_raw_jwt()['jti']
-    print jti
     if Revoked_Tokens.query.filter_by(token=jti).first():
         return True
     return False
