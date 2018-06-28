@@ -10,14 +10,21 @@ https://hellobooks6.docs.apiary.io/#reference
 
 ## Endpoint functionality
 
-| Endpoints           | Functionality     | method |
-| -------------       |:-------------:    | -----: |
-| /api/books          | add a new book    | POST   |
-| /api/book/id        | get specific book | GET    |
-| /api/book/id        | edit specific book| PUT    |
-| /api/auth/register  | user registration | POST   |
-| /api/auth/login     | user login        | POST   |
-| /api/users/id       | borrow a book     | POST   |
+| Endpoints                        | Functionality                    | method |
+| -------------                    |:-------------:                   | -----: |
+| /api/books                       | add a new book                   | POST   |
+| /api/book/id                     | get specific book                | GET    |
+| /api/book/id                     | edit specific book               | PUT    |
+| /api/auth/register               | user registration                | POST   |
+| /api/auth/login                  | user login                       | POST   |
+| /api/users/id                    | borrow a book                    | POST   |
+|/api/users/books                  |Get User borrowing history        |GET
+|/api/users/books?returned=false   |Get books not yet been returned   |GET 
+|/api/auth/register                |Creates a user account            |POST
+|/api/auth/login                   |Logs in a user                    |POST
+|/api/auth/logout                  |Logs out a user                   |POST
+|/api/auth/reset-password          |Password reset                    |POST
+
 
 ## Installing and running the application
 1. clone the repo at : https://github.com/dmaish/HelloAPI/tree/develop
