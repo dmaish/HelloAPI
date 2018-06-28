@@ -27,3 +27,19 @@ https://hellobooks6.docs.apiary.io/#reference
 4. Activate the virtual environment
 5. Install the requirements: pip install -r requirements.txt
 6. Run the application: flask run
+
+## Running the tests
+1. Cd into the tests folder : cd tests
+2. Run the tests: nosetest --with coverage
+
+## Designs Link
+https://dmaish.github.io/HelloBooks/index.html
+
+## Made with
+1.Flask
+2.Postgresql
+3.Heroku
+
+## contributors
+Daniel Maina
+Andela Kenya
