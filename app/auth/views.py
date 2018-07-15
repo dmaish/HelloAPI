@@ -2,7 +2,6 @@ import re
 
 from flask import request, jsonify
 from flask_jwt_extended import (create_access_token,
-                                get_jwt_identity,
                                 jwt_required,
                                 get_raw_jwt)
 
@@ -10,6 +9,7 @@ from flask_jwt_extended import (create_access_token,
 from . import auth
 from app.models import *
 from app import db, jwt
+from .decorators import *
 
 
 @auth.route("/", methods=['GET'])
@@ -25,54 +25,101 @@ def home():
 @auth.route("/api/auth/register", methods=['POST'])
 def user_register():
     """method to register new user"""
-    username = request.data["username"].strip()
-    email = request.data["email"]
-    password = request.data["password"].strip()
+    username = request.data.get("username")
+    email = request.data.get("email")
+    password = request.data.get("password")
 
-    if username == "" or username == " ":
-        return jsonify("message: please make sure to type in your username")
-    elif password == "" or password == " ":
-        return jsonify("message: please make sure to type in your password")
-    elif len(password) < 8:
-        return jsonify("message: password must have 8 or more characters")
-    elif len(username) < 5:
-        return jsonify("message: username must have 5 or more characters")
+    if username:
+        username = username.strip()
+        if username == "" or username == " ":
+            return jsonify({
+                "message": "username field cannot be empty"
+            })
 
-    else:
-        # checking if user already exists
-        if User.get_user_by_email(email):
-            response = {"message": "User already exists.Please login"}
+        elif len(username) < 5:
+            return jsonify({
+                "message": "username must have 5 or more characters"
+            })
 
-            return jsonify(response), 202
+    elif not username:
+        return jsonify({
+            "message": "please make sure to submit your username"
+        })
+
+    # email validation
+    if email:
+        email = email.strip()
+        if email == "" or email == " ":
+            return jsonify({
+                "message": "email field cannot be empty"
+            })
         else:
             if re.match(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$", email):
-                user = User(username=username,
-                            email=email,
-                            password=password)
-
-                # add new user to database
-                db.session.add(user)
-                db.session.commit()
-
-                response = {
-                    "message": "you registered successfully"
-                }
-
-                return jsonify(response), 201
+                pass
             else:
-                response = {
-                    "message": "please enter a valid email address"
-                }
-                return jsonify(response)
+                return jsonify({
+                    "message": "email submitted is not a valid email"
+                })
+    elif not email:
+        return jsonify({
+            "message": "please make sure to submit your email"
+        })
+
+    # password validation
+    if password:
+        password = password.strip()
+        if password == "" or password == " ":
+            return jsonify({
+                "message": "password field cannot be empty"
+            })
+        if len(password) < 8:
+            return jsonify({
+                "message": "password must have 8 or more characters"
+            })
+        if not re.match("^[a-zA-Z0-9]+$", password):
+            return jsonify({
+                "message": "your password must contain both letters and numbers"
+            })
+        else:
+            pass
+
+    elif not password:
+        return jsonify({
+            "message": "please make sure to submit your password"
+        })
+
+    # checking if user already exists
+    if User.get_user_by_email(email):
+        response = {"message": "User already exists.Please login"}
+
+        return jsonify(response), 202
+
+    # storing user details into database
+    user = User(username=username.strip(),
+                email=email.strip(),
+                password=password.strip())
+
+    db.session.add(user)
+    db.session.commit()
+
+    response = {
+        "message": "you registered successfully"
+    }
+
+    return jsonify(response), 201
 
 
 @auth.route("/api/auth/login", methods=["POST"])
 def user_login():
     """method to handle login of registered users"""
-    email = request.data["email"]
-    password = request.data["password"]
+    email = request.data.get("email")
+    password = request.data.get("password")
 
     # get the user if they exist and if they gave valid password...
+    if not email:
+        return jsonify("message: please make sure to type in your email")
+    if not password:
+        return jsonify("message: please make sure to type in your password")
     registered_user = User.get_user_by_email(email)
     if registered_user is not None and registered_user.check_password(password):
             # generate the access token
@@ -95,6 +142,7 @@ def user_login():
 
 @auth.route("/api/auth/reset-password", methods=["POST"])
 @jwt_required
+@check_if_logged_out
 def password_reset():
     """method to reset password of logged in user"""
     new_password = request.data["password"]
@@ -112,6 +160,7 @@ def password_reset():
 
 @auth.route("/api/auth/logout", methods=["DELETE"])
 @jwt_required
+@check_if_logged_out
 def logout():
     """method for revoking the current user's json web token"""
     jti = get_raw_jwt()['jti']
@@ -123,15 +172,12 @@ def logout():
 
 
 @jwt.token_in_blacklist_loader
-def check_if_token_in_blacklist_loader():
+def check_if_token_in_blacklist_loader(decrypted_token):
     """jwt decorator that checks if token is revoked"""
-    jti = get_raw_jwt()['jti']
+    jti = decrypted_token['jti']
     if Revoked_Tokens.query.filter_by(token=jti).first():
         return True
-    return False
+    else:
+        return False
 
 
-@jwt.revoked_token_loader
-def revoked_message():
-    """method to return message if token has been revoked"""
-    return jsonify("message: your token is revoked, login again")

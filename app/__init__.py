@@ -19,6 +19,8 @@ def create_app(config_name):
     jwt.init_app(app)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     JWTManager(app)
+    app.config['JWT_BLACKLIST_ENABLED'] = True
+    app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
     # importing the authentication, admin and user blueprints and register them on the app
     from .auth import auth
