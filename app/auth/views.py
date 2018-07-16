@@ -75,9 +75,9 @@ def user_register():
             return jsonify({
                 "message": "password must have 8 or more characters"
             })
-        if not re.match("^[a-zA-Z0-9]+$", password):
+        if re.match(r"^.*(?=.{6,})(?=.*[a-zA-Z])[a-zA-Z0-9]+$", password):
             return jsonify({
-                "message": "your password must contain both letters and numbers"
+                "message": "your password must have 8 charecters, at least one number and a capital letter"
             })
         else:
             pass
