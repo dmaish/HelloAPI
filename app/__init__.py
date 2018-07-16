@@ -18,7 +18,7 @@ def create_app(config_name):
     db.init_app(app)
     jwt.init_app(app)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    JWTManager(app)
+    # JWTManager(app)
     app.config['JWT_BLACKLIST_ENABLED'] = True
     app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 

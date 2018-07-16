@@ -1,11 +1,10 @@
-import re
-
 from flask import request, jsonify
 from flask_jwt_extended import (create_access_token,
                                 jwt_required,
                                 get_raw_jwt)
 
 # local imports
+import re
 from . import auth
 from app.models import *
 from app import db, jwt
@@ -142,7 +141,6 @@ def user_login():
 
 @auth.route("/api/auth/reset-password", methods=["POST"])
 @jwt_required
-@check_if_logged_out
 def password_reset():
     """method to reset password of logged in user"""
     new_password = request.data["password"]
@@ -158,9 +156,8 @@ def password_reset():
     return response, 200
 
 
-@auth.route("/api/auth/logout", methods=["DELETE"])
+@auth.route("/api/auth/logout", methods=["POST"])
 @jwt_required
-@check_if_logged_out
 def logout():
     """method for revoking the current user's json web token"""
     jti = get_raw_jwt()['jti']
@@ -176,8 +173,8 @@ def check_if_token_in_blacklist_loader(decrypted_token):
     """jwt decorator that checks if token is revoked"""
     jti = decrypted_token['jti']
     if Revoked_Tokens.query.filter_by(token=jti).first():
+        print(Revoked_Tokens.query.filter_by(token=jti).first())
         return True
-    else:
-        return False
+    return False
 
 
