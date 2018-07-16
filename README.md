@@ -25,7 +25,7 @@ https://hellobooks6.docs.apiary.io/#reference
 
 
 ## Installing and running the application
-1. clone the repo at :`https://github.com/dmaish/HelloAPI/tree/develop`
+1. clone the repo at :``https://github.com/dmaish/HelloAPI/tree/develop``
 2. Install virtualenv : `pip install virtualenv`
 3. CD into the `application folder`
 3. Make a virtual environment : `virtualenv you-env`
