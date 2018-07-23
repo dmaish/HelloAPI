@@ -41,7 +41,7 @@ http://testapi3681.docs.apiary.io/
 https://dmaish.github.io/HelloBooks/index.html
 
 ## Deployment Link
-https://quiet-waters-54661.herokuapp.com/
+http://radiant-ridge-36530.herokuapp.com
 
 ## Made with
 1. Flask
