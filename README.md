@@ -6,7 +6,7 @@
 HelloApi is a library book borrowing and restocking api.It helps an admin user add, edit or delete a book.Helps a user checkout their profile and borrow books
 
 ## API documentation
-https://hellobooks6.docs.apiary.io/#reference
+http://testapi3681.docs.apiary.io/
 
 ## Endpoint functionality
 
@@ -41,7 +41,7 @@ https://hellobooks6.docs.apiary.io/#reference
 https://dmaish.github.io/HelloBooks/index.html
 
 ## Deployment Link
-https://quiet-waters-54661.herokuapp.com/
+http://radiant-ridge-36530.herokuapp.com
 
 ## Made with
 1. Flask
