@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request
 from flask_jwt_extended import (create_access_token,
                                 jwt_required,
                                 get_raw_jwt)
@@ -8,7 +8,6 @@ import re
 from . import auth
 from app.models import *
 from app import db, jwt
-from .decorators import *
 
 
 @auth.route("/", methods=['GET'])
@@ -38,6 +37,12 @@ def user_register():
         elif len(username) < 5:
             return jsonify({
                 "message": "username must have 5 or more characters"
+            })
+        if re.match(r"^[a-zA-Z]+$", username):
+            pass
+        else:
+            return jsonify({
+                "message": "only use characters for username"
             })
 
     elif not username:
@@ -77,7 +82,8 @@ def user_register():
             })
         if re.match(r"^.*(?=.{6,})(?=.*[a-zA-Z])[a-zA-Z0-9]+$", password):
             return jsonify({
-                "message": "your password must have 8 charecters, at least one number and a capital letter"
+                "message": "your password must have 8 charecters, at least, one special character, one number and a "
+                           "capital letter "
             })
         else:
             pass
