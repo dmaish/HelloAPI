@@ -122,9 +122,9 @@ def user_login():
 
     # get the user if they exist and if they gave valid password...
     if not email:
-        return jsonify("message: please make sure to type in your email")
+        return jsonify({"message":" please make sure to type in your email"})
     if not password:
-        return jsonify("message: please make sure to type in your password")
+        return jsonify({"message": "please make sure to type in your password"})
     registered_user = User.get_user_by_email(email)
     if registered_user is not None and registered_user.check_password(password):
             # generate the access token

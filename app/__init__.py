@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 # local imports
 from config import app_config
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
 db = SQLAlchemy()
@@ -17,6 +18,7 @@ def create_app(config_name):
     app.config.from_pyfile('config.py')
     db.init_app(app)
     jwt.init_app(app)
+    CORS(app)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     # JWTManager(app)
     app.config['JWT_BLACKLIST_ENABLED'] = True

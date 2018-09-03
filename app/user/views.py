@@ -21,6 +21,7 @@ def list_books():
                 "title": each_book.title,
                 "author": each_book.author,
                 "category": each_book.category,
+                "borrowed_flag": each_book.borrowed_flag,
                 "url": each_book.url}
         books.append(book)
 
@@ -82,7 +83,7 @@ def return_book(id):
     db.session.add(borrowing_record)
     db.session.commit()
     response = {
-        "message": "book successfully returned",
+        "message": "successfully returned",
         "time returned": borrowing_record.time_returned
     }
     return jsonify(response), 200
@@ -119,7 +120,7 @@ def get_user_borrowing_history():
             books.append(record)
 
         response = {
-            "unreturned books": books
+            "unreturned_books": books
         }
         return jsonify(response), 200
     else:
@@ -139,13 +140,13 @@ def get_user_borrowing_history():
                       "title": book.title,
                       "author": book.author,
                       "category": book.category,
-                      "time borrowed": each_record.time_borrowed,
-                      "time returned": each_record.time_returned,
+                      "time_borrowed": each_record.time_borrowed,
+                      "time_returned": each_record.time_returned,
                       "return_flag": each_record.return_flag}
 
             history.append(record)
 
         response = {
-            "borrowing history": history
+            "borrowing_history": history
         }
         return jsonify(response), 200
