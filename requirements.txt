@@ -1,10 +1,10 @@
-
 alembic==0.9.9
 cffi==1.11.5
 click==6.7
 enum34==1.1.6
 Flask==0.12.2
 Flask-API==1.0
+Flask-Cors==3.0.6
 Flask-JWT==0.3.2
 Flask-JWT-Extended==3.7.2
 Flask-Migrate==2.1.1
