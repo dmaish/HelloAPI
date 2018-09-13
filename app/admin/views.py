@@ -112,7 +112,7 @@ def get_edit_remove_book(id):
                 db.session.delete(book)
                 db.session.commit()
                 response = jsonify({"message": "{} deleted successfully".format(id)})
-                response.status_code = 200
+                response.status_code = 404
                 return response
         else:
             response = jsonify({"message": "book not available in the library"})
