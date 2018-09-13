@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 # local imports
 from config import app_config
 from flask_cors import CORS
+from datetime import timedelta
 from flask_jwt_extended import JWTManager
 
 db = SQLAlchemy()
@@ -22,6 +23,7 @@ def create_app(config_name):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     # JWTManager(app)
     app.config['JWT_BLACKLIST_ENABLED'] = True
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=600)
     app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
     # importing the authentication, admin and user blueprints and register them on the app

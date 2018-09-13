@@ -122,7 +122,7 @@ def user_login():
 
     # get the user if they exist and if they gave valid password...
     if not email:
-        return jsonify({"message":" please make sure to type in your email"})
+        return jsonify({"message": " please make sure to type in your email"})
     if not password:
         return jsonify({"message": "please make sure to type in your password"})
     registered_user = User.get_user_by_email(email)
@@ -132,7 +132,8 @@ def user_login():
             if access_token:
                 response = {
                     "message": "You logged in successfully",
-                    "access_token": access_token
+                    "access_token": access_token,
+                    "is_admin": registered_user.is_admin
                 }
 
                 return jsonify(response), 200

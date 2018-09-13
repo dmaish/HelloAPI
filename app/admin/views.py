@@ -34,7 +34,15 @@ def add_book():
 
             added_book = Book.query.filter_by(title=title).first()
             response = jsonify({
-                                "message": "success! '{}' added to the library".format(added_book.title)
+                                # "message": "success! '{}' added to the library".format(added_book.title),
+                                "message": "success! book added to the library",
+                                "book": {
+                                            "id": added_book.id,
+                                            "title": added_book.title,
+                                            "author": added_book.author,
+                                            "category": added_book.category,
+                                            "url": added_book.url
+                                            }
                                     })
             response.status_code = 201
             return response
@@ -96,11 +104,17 @@ def get_edit_remove_book(id):
         if Book.query.filter_by(id=id).first():
             # check if book is already borrowed before deleting
             if Borrow_Record.query.filter_by(book_id=id, return_flag=False).first():
-                return jsonify("message: you cannot delete book already borrowed")
+                response = jsonify({"message": "you cannot delete book already borrowed"})
+                response.status_code = 200
+                return response
 
             else:
                 db.session.delete(book)
                 db.session.commit()
-                return jsonify("message: {} deleted successfully".format(id)), 404
+                response = jsonify({"message": "{} deleted successfully".format(id)})
+                response.status_code = 200
+                return response
         else:
-            return jsonify("message: book not available in the library")
+            response = jsonify({"message": "book not available in the library"})
+            response.status_code = 200
+            return response
